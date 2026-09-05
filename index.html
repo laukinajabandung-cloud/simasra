@@ -89,7 +89,6 @@
   .upload-box:hover{border-color:var(--accent);background:rgba(52,211,153,0.05)}
   .save-indicator{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .5rem;border-radius:6px;font-size:.65rem;font-weight:600;background:rgba(52,211,153,0.15);color:#6ee7b7;border:1px solid rgba(52,211,153,0.3)}
 
-  /* ===== ROLE BASED ACCESS CONTROL (RBAC) ===== */
   body.role-pimpinan .role-pengelola-only,
   body.role-pimpinan-umum .role-pengelola-only { display: none !important; }
   body.role-pimpinan-umum .role-pimpinan-only { display: none !important; }
@@ -99,13 +98,11 @@
   body.role-pimpinan-umum .nav-item[data-view="persetujuan"] { display: none; }
   body.role-pimpinan-umum .nav-item[data-view="pengaturan"] { display: none; }
 
-  /* ===== LOGIN PAGE ===== */
   #loginPage { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; background: var(--bg); background-image: radial-gradient(circle at 50% 50%, rgba(52,211,153,0.05) 0%, transparent 70%); }
   #loginPage.hidden, #appLayout.hidden { display: none !important; }
   .login-card { width: 100%; max-width: 400px; padding: 2.5rem; background: var(--panel); border: 1px solid var(--border-strong); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; z-index: 10; }
   .login-logo { width: 64px; height: 64px; margin: 0 auto 1.5rem; border-radius: 18px; display: flex; align-items:center; justify-content: center; font-size: 1.5rem; background: linear-gradient(135deg,#34d399,#fbbf24); color: #04231b; }
 
-  /* ===== DETAIL ROW ===== */
   .detail-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--border)}
   .detail-row:last-child{border-bottom:none}
   .detail-label{font-size:.8rem;color:var(--muted)}
@@ -149,7 +146,7 @@
   </div>
 </div>
 
-<!-- APP LAYOUT (Hidden until login) -->
+<!-- APP LAYOUT -->
 <div id="appLayout" class="hidden">
 <div class="ambient"></div>
 <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-64 z-40 sidebar-mobile md:translate-x-0 transition-transform" style="background:rgba(10,20,16,0.95);backdrop-filter:blur(20px);border-right:1px solid var(--border)">
@@ -189,6 +186,10 @@
         <div><div id="pageTitle" class="font-display font-bold text-xl">Dashboard</div><div id="pageSub" class="text-xs" style="color:var(--muted)">Ringkasan program kesejahteraan pegawai</div></div>
       </div>
       <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 pl-3 border-l" style="border-color:var(--border)">
+          <i class="fa-solid fa-calendar-days text-xs" style="color:var(--muted)"></i>
+          <select id="globalYearFilter" onchange="applyYearFilter(this.value)" class="px-3 py-2 rounded-lg text-xs" style="background: rgba(255,255,255,0.03); border:1px solid var(--border); color:var(--fg);"></select>
+        </div>
         <button onclick="doLogout()" class="btn-ghost px-3 py-2 rounded-lg text-xs flex items-center gap-2" style="color:var(--danger); border-color:rgba(248,113,113,0.3)">
           <i class="fa-solid fa-right-from-bracket"></i> Logout
         </button>
@@ -208,19 +209,19 @@
         <div class="relative">
           <div class="flex items-center gap-2 mb-2"><div class="pulse-dot"></div><span class="text-xs uppercase tracking-wider" style="color:var(--accent)">Sistem Aktif</span></div>
           <h2 class="font-display text-2xl md:text-3xl font-bold mb-2">Selamat datang, <span id="welcomeName">Rina Hartanti</span></h2>
-          <p class="text-sm max-w-xl" style="color:var(--muted)">Ada <span class="font-semibold" style="color:var(--accent-2)">7 pengajuan</span> menunggu persetujuan Anda hari ini. Total nilai tunjangan kesejahteraan pegawai aktif bulan ini mencapai <span class="font-semibold text-white">Rp 2,4 Miliar</span>.</p>
+          <p class="text-sm max-w-xl" style="color:var(--muted)">Total nilai tunjangan kesejahteraan pegawai aktif pada tahun <span class="year-label">2024</span> ini mencapai <span class="font-semibold text-white">Rp 2,4 Miliar</span>.</p>
           <div class="flex flex-wrap gap-2 mt-4"><button onclick="openModal('modalPengajuan')" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Buat Pengajuan</button><button onclick="navTo('laporan')" class="btn-ghost px-4 py-2 rounded-lg text-sm flex items-center gap-2"><i class="fa-solid fa-chart-line"></i> Lihat Laporan</button></div>
         </div>
       </div>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(251,191,36,0.15);color:#fbbf24"><i class="fa-solid fa-wallet"></i></div><span class="text-[10px] font-semibold" style="color:var(--accent)">+12%</span></div><div class="text-2xl font-display font-bold">Rp 487<span class="text-base">,3 Jt</span></div><div class="text-xs mt-1" style="color:var(--muted)">Total Kasbon Aktif</div></div>
-        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(34,211,238,0.15);color:#22d3ee"><i class="fa-solid fa-laptop"></i></div><span class="text-[10px] font-semibold" style="color:var(--accent)">+5 unit</span></div><div class="text-2xl font-display font-bold">142 <span class="text-base">unit</span></div><div class="text-xs mt-1" style="color:var(--muted)">Laptop Disetujai</div></div>
-        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(52,211,153,0.15);color:#34d399"><i class="fa-solid fa-piggy-bank"></i></div><span class="text-[10px] font-semibold" style="color:var(--accent)">+8,2%</span></div><div class="text-2xl font-display font-bold">Rp 1,8 <span class="text-base">M</span></div><div class="text-xs mt-1" style="color:var(--muted)">Tabungan SDM</div></div>
-        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(96,165,250,0.15);color:#60a5fa"><i class="fa-solid fa-hand-holding-heart"></i></div><span class="text-[10px] font-semibold" style="color:var(--accent-2)">23 kasus</span></div><div class="text-2xl font-display font-bold">Rp 312<span class="text-base">,5 Jt</span></div><div class="text-xs mt-1" style="color:var(--muted)">Bantuan Disalurkan</div></div>
+        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(251,191,36,0.15);color:#fbbf24"><i class="fa-solid fa-wallet"></i></div></div><div class="text-2xl font-display font-bold" id="statKasbon">Rp 0</div><div class="text-xs mt-1" style="color:var(--muted)">Total Kasbon <span class="year-label">2024</span></div></div>
+        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(34,211,238,0.15);color:#22d3ee"><i class="fa-solid fa-laptop"></i></div></div><div class="text-2xl font-display font-bold" id="statSoftloan">0 <span class="text-base">unit</span></div><div class="text-xs mt-1" style="color:var(--muted)">Laptop Disetujai <span class="year-label">2024</span></div></div>
+        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(52,211,153,0.15);color:#34d399"><i class="fa-solid fa-piggy-bank"></i></div></div><div class="text-2xl font-display font-bold" id="statTabungan">Rp 0</div><div class="text-xs mt-1" style="color:var(--muted)">Tabungan SDM <span class="year-label">2024</span></div></div>
+        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(96,165,250,0.15);color:#60a5fa"><i class="fa-solid fa-hand-holding-heart"></i></div></div><div class="text-2xl font-display font-bold" id="statBantuan">Rp 0</div><div class="text-xs mt-1" style="color:var(--muted)">Bantuan Disalurkan <span class="year-label">2024</span></div></div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-        <div class="lg:col-span-2 glass rounded-xl p-5"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold">Tren Penyaluran Kesejahteraan</h3><p class="text-xs" style="color:var(--muted)">8 bulan terakhir · dalam jutaan rupiah</p></div><div class="flex gap-2 text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:#34d399"></span>Pinjaman</span><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:#fbbf24"></span>Bantuan</span></div></div><canvas id="chartTrend" height="120"></canvas></div>
-        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Distribusi Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Berdasarkan jumlah pengajuan</p><canvas id="chartPie" height="200"></canvas></div>
+        <div class="lg:col-span-2 glass rounded-xl p-5"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold">Tren Penyaluran Kesejahteraan</h3><p class="text-xs" style="color:var(--muted)">Tahun <span class="year-label">2024</span> · dalam jutaan rupiah</p></div><div class="flex gap-2 text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:#34d399"></span>Pinjaman</span><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:#fbbf24"></span>Bantuan</span></div></div><canvas id="chartTrend" height="120"></canvas></div>
+        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Distribusi Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Berdasarkan jumlah pengajuan <span class="year-label">2024</span></p><canvas id="chartPie" height="200"></canvas></div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div class="lg:col-span-2 glass rounded-xl p-5"><div class="flex items-center justify-between mb-4"><h3 class="font-display font-semibold">Pengajuan Terbaru</h3><button class="text-xs" style="color:var(--accent)">Lihat Semua →</button></div><div class="space-y-2" id="recentList"></div></div>
@@ -326,7 +327,7 @@
 
     <section id="view-infaq" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Terkumpul 2024</div><div class="text-xl font-display font-bold mt-1">Rp 145,5 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Terkumpul <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 145,5 Jt</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Disalurkan</div><div class="text-xl font-display font-bold mt-1">Rp 132,2 Jt</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Berinfaq</div><div class="text-xl font-display font-bold mt-1">156 <span class="text-xs">orang</span></div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Saldo Infaq Saat Ini</div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)">Rp 13,3 Jt</div></div>
@@ -340,7 +341,7 @@
 
     <section id="view-pendidikan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan 2024</div><div class="text-xl font-display font-bold mt-1">Rp 234 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 234 Jt</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Anak Pegawai Dibantu</div><div class="text-xl font-display font-bold mt-1">67 <span class="text-xs">anak</span></div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pengajuan Pending</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">3</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Budget Tersisa</div><div class="text-xl font-display font-bold mt-1">Rp 166 Jt</div></div>
@@ -350,7 +351,7 @@
 
     <section id="view-kesehatan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Klaim 2024</div><div class="text-xl font-display font-bold mt-1">Rp 156 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Klaim <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 156 Jt</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Klaim Approved</div><div class="text-xl font-display font-bold mt-1">48 <span class="text-xs">kasus</span></div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pending Approval</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">1</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Klaim</div><div class="text-xl font-display font-bold mt-1">Rp 3,2 Jt</div></div>
@@ -360,7 +361,7 @@
 
     <section id="view-musibah" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan 2024</div><div class="text-xl font-display font-bold mt-1">Rp 122,5 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 122,5 Jt</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Kasus Selesai</div><div class="text-xl font-display font-bold mt-1">14 <span class="text-xs">kasus</span></div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Sedang Diproses</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">2</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Dana Darurat Tersedia</div><div class="text-xl font-display font-bold mt-1">Rp 250 Jt</div></div>
@@ -368,7 +369,6 @@
       <div class="glass rounded-xl"><div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)"><h3 class="font-display font-semibold">Daftar Bantuan Musibah</h3><button onclick="openModal('modalPengajuan')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Ajukan Bantuan</button></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">Pegawai</th><th class="p-4">Jenis Musibah</th><th class="p-4">Tanggal Kejadian</th><th class="p-4">Bantuan Diberikan</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="musibahTable"></tbody></table></div></div>
     </section>
 
-    <!-- VIEW KEUANGAN -->
     <section id="view-keuangan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Saldo Awal</div><div class="text-xl font-display font-bold mt-1" id="keuTotalSaldoAwal">Rp 0</div></div>
@@ -377,7 +377,7 @@
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Saldo Akhir</div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent-2)" id="keuSaldoAkhir">Rp 0</div></div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-4">Tren Aliran Kas</h3><canvas id="chartCashFlow" height="150"></canvas></div>
+        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-4">Tren Aliran Kas <span class="year-label">2024</span></h3><canvas id="chartCashFlow" height="150"></canvas></div>
         <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-4">Saldo per Akun</h3><canvas id="chartAkunBar" height="150"></canvas></div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -420,7 +420,7 @@
 
     <section id="view-laporan" class="view">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Realisasi per Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Tahun 2024 · dalam jutaan rupiah</p><canvas id="chartBar" height="160"></canvas></div>
+        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Realisasi per Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Tahun <span class="year-label">2024</span> · dalam jutaan rupiah</p><canvas id="chartBar" height="160"></canvas></div>
         <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Tingkat Pencairan</h3><p class="text-xs mb-4" style="color:var(--muted)">Rasio pengajuan vs disetujui</p><div class="space-y-3" id="approvalRate"></div></div>
       </div>
     </section>
@@ -498,7 +498,7 @@
   </div>
 </div>
 
-<!-- MODAL DETAIL (untuk View setiap menu) -->
+<!-- MODAL DETAIL -->
 <div id="modalDetail" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)">
@@ -553,7 +553,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH/EDIT TRANSAKSI KEUANGAN -->
+<!-- MODAL KEUANGAN -->
 <div id="modalKeuangan" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" id="modalKeuanganTitle">Catat Transaksi</h3><button onclick="closeModal('modalKeuangan')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
@@ -567,7 +567,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH/EDIT AKUN KEUANGAN -->
+<!-- MODAL AKUN KEUANGAN -->
 <div id="modalAkun" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" id="modalAkunTitle">Tambah Akun Keuangan</h3><button onclick="closeModal('modalAkun')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
@@ -579,7 +579,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH/EDIT PROGRAM -->
+<!-- MODAL PROGRAM -->
 <div id="modalProgram" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" id="modalProgramTitle">Tambah Program Baru</h3><button onclick="closeModal('modalProgram')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
@@ -601,7 +601,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH/EDIT TIM PERSETUJUAN -->
+<!-- MODAL TIM -->
 <div id="modalTim" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" id="modalTimTitle">Tambah Anggota Tim</h3><button onclick="closeModal('modalTim')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
@@ -621,7 +621,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH/EDIT USER -->
+<!-- MODAL USER -->
 <div id="modalUser" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" id="modalUserTitle">Tambah Pengguna</h3><button onclick="closeModal('modalUser')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
@@ -643,7 +643,7 @@
   </div>
 </div>
 
-<!-- MODAL HAPUS ENTRI (DIPERBAIKI - ditambahkan elemen deleteEntryName) -->
+<!-- MODAL HAPUS ENTRI -->
 <div id="modalDeleteEntry" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop p-4">
   <div class="glass rounded-2xl w-full max-w-md">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" style="color:var(--danger)">Konfirmasi Hapus</h3><button onclick="closeModal('modalDeleteEntry')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
@@ -729,9 +729,21 @@ let pegawai = [], programs = [], timPersetujuan = [], kasbonData = [], tabunganD
 let pegawaiFilterText = '', kasbonFilter = 'all', tabunganFilter = 'all', infaqFilter = 'all';
 let editingPegawaiIdx = -1, deletingPegawaiIdx = -1, editingTimIdx = -1, deletingTimIdx = -1, editingUserIdx = -1, deletingUserIdx = -1, editingProgramIdx = -1, deletingProgramIdx = -1, editingEntryType = null, editingEntryIdx = -1, deletingEntryType = null, deletingEntryIdx = -1, editingKeuanganIdx = -1, deletingKeuanganIdx = -1, editingAkunIdx = -1, deletingAkunIdx = -1;
 let currentViewPegawaiIdx = -1;
+let currentFilterYear = new Date().getFullYear();
 
 function hexToRgba(hex, alpha) { const r = parseInt(hex.slice(1,3), 16); const g = parseInt(hex.slice(3,5), 16); const b = parseInt(hex.slice(5,7), 16); return `rgba(${r},${g},${b},${alpha})`; }
 function formatRupiah(angka) { if (isNaN(angka) || angka === null) angka = 0; return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+function formatShortRupiah(angka) {
+  if (angka >= 1000000000) return 'Rp ' + (angka / 1000000000).toFixed(1).replace('.', ',') + ' M';
+  if (angka >= 1000000) return 'Rp ' + (angka / 1000000).toFixed(1).replace('.', ',') + ' Jt';
+  if (angka >= 1000) return 'Rp ' + (angka / 1000).toFixed(0) + ' Rb';
+  return 'Rp ' + angka;
+}
+function parseRupiah(str) {
+  if (typeof str === 'number') return str;
+  if (!str) return 0;
+  return parseInt(String(str).replace(/[^0-9-]/g, '')) || 0;
+}
 
 function calculateMasaKerja(startDateStr) {
   if (!startDateStr) return '-';
@@ -855,32 +867,32 @@ const defaultData = {
     {tgl:'20 Sep 2024', pgw:6, kategori:'kesehatan', jenis:'Penyaluran', penerima:'Bantuan TBC Anak', jumlah:'-Rp 12.500.000', status:'pending'},
   ],
   sewarumahData: [
-    {pegawai:0,lokasi:'Bandung, Jawa Barat',sewa:'Rp 4.500.000',subsidi:'Rp 3.375.000',periode:'Jan 2024 - Des 2025',status:'active',docs:{ktp:true,photo:true,kwitansi:true}},
-    {pegawai:2,lokasi:'Tangerang, Banten',sewa:'Rp 5.000.000',subsidi:'Rp 3.750.000',periode:'Mar 2024 - Feb 2026',status:'active',docs:{ktp:true,photo:true,kwitansi:false}},
-    {pegawai:3,lokasi:'Depok, Jawa Barat',sewa:'Rp 3.500.000',subsidi:'Rp 2.625.000',periode:'Sep 2024 - Aug 2025',status:'pending',docs:{ktp:true,photo:false,kwitansi:false}},
-    {pegawai:5,lokasi:'Bekasi, Jawa Barat',sewa:'Rp 4.000.000',subsidi:'Rp 3.000.000',periode:'Jan 2024 - Des 2024',status:'active',docs:{ktp:true,photo:true,kwitansi:true}},
-    {pegawai:6,lokasi:'Bogor, Jawa Barat',sewa:'Rp 6.000.000',subsidi:'Rp 4.500.000',periode:'Feb 2024 - Jan 2026',status:'active',docs:{ktp:false,photo:false,kwitansi:false}},
+    {pegawai:0,lokasi:'Bandung, Jawa Barat',sewa:'Rp 4.500.000',subsidi:'Rp 3.375.000',periode:'Jan 2024 - Des 2025',tgl:'15 Jan 2024',status:'active',docs:{ktp:true,photo:true,kwitansi:true}},
+    {pegawai:2,lokasi:'Tangerang, Banten',sewa:'Rp 5.000.000',subsidi:'Rp 3.750.000',periode:'Mar 2024 - Feb 2026',tgl:'01 Mar 2024',status:'active',docs:{ktp:true,photo:true,kwitansi:false}},
+    {pegawai:3,lokasi:'Depok, Jawa Barat',sewa:'Rp 3.500.000',subsidi:'Rp 2.625.000',periode:'Sep 2024 - Aug 2025',tgl:'10 Sep 2024',status:'pending',docs:{ktp:true,photo:false,kwitansi:false}},
+    {pegawai:5,lokasi:'Bekasi, Jawa Barat',sewa:'Rp 4.000.000',subsidi:'Rp 3.000.000',periode:'Jan 2024 - Des 2024',tgl:'05 Jan 2024',status:'active',docs:{ktp:true,photo:true,kwitansi:true}},
+    {pegawai:6,lokasi:'Bogor, Jawa Barat',sewa:'Rp 6.000.000',subsidi:'Rp 4.500.000',periode:'Feb 2024 - Jan 2026',tgl:'05 Feb 2024',status:'active',docs:{ktp:false,photo:false,kwitansi:false}},
   ],
   softloanData: [
-    {pegawai:0,laptop:'MacBook Air M2',nilai:'Rp 18.000.000',tenor:'12 bln',cicilan:'Rp 1.500.000',status:'active'},
-    {pegawai:1,laptop:'Lenovo ThinkPad X1',nilai:'Rp 16.500.000',tenor:'12 bln',cicilan:'Rp 1.375.000',status:'pending'},
-    {pegawai:2,laptop:'Dell XPS 13',nilai:'Rp 17.000.000',tenor:'12 bln',cicilan:'Rp 1.416.000',status:'active'},
-    {pegawai:3,laptop:'ASUS ZenBook 14',nilai:'Rp 14.000.000',tenor:'10 bln',cicilan:'Rp 1.400.000',status:'active'},
-    {pegawai:4,laptop:'MacBook Pro 14',nilai:'Rp 28.000.000',tenor:'18 bln',cicilan:'Rp 1.555.000',status:'active'}
+    {pegawai:0,laptop:'MacBook Air M2',nilai:'Rp 18.000.000',tenor:'12 bln',cicilan:'Rp 1.500.000',tgl:'01 Mar 2024',status:'active'},
+    {pegawai:1,laptop:'Lenovo ThinkPad X1',nilai:'Rp 16.500.000',tenor:'12 bln',cicilan:'Rp 1.375.000',tgl:'10 Okt 2024',status:'pending'},
+    {pegawai:2,laptop:'Dell XPS 13',nilai:'Rp 17.000.000',tenor:'12 bln',cicilan:'Rp 1.416.000',tgl:'01 Mar 2024',status:'active'},
+    {pegawai:3,laptop:'ASUS ZenBook 14',nilai:'Rp 14.000.000',tenor:'10 bln',cicilan:'Rp 1.400.000',tgl:'10 Jul 2024',status:'active'},
+    {pegawai:4,laptop:'MacBook Pro 14',nilai:'Rp 28.000.000',tenor:'18 bln',cicilan:'Rp 1.555.000',tgl:'15 Jan 2024',status:'active'}
   ],
   pendidikanData: [
-    {pegawai:0,anak:'Rafi Wijaya / SMA',institusi:'SMA Negeri 5 Bandung',jumlah:'Rp 3.000.000',periode:'Tahun Ajaran 2024/2025',status:'active'},
-    {pegawai:1,anak:'Aisha Nurhaliza / SD',institusi:'SD Cendekia BAZNAS',jumlah:'Rp 2.500.000',periode:'Tahun Ajaran 2024/2025',status:'active'},
-    {pegawai:2,anak:'Bima Santoso / Kuliah',institusi:'Institut Teknologi Bandung',jumlah:'Rp 8.000.000',periode:'Semester Ganjil 2024',status:'active'},
-    {pegawai:3,anak:'Citra Lestari / SMP',institusi:'SMP Negeri 3 Jakarta',jumlah:'Rp 2.000.000',periode:'Tahun Ajaran 2024/2025',status:'pending'},
-    {pegawai:4,anak:'Doni Prasetyo / Kuliah',institusi:'Universitas Indonesia',jumlah:'Rp 7.500.000',periode:'Semester Ganjil 2024',status:'active'}
+    {pegawai:0,anak:'Rafi Wijaya / SMA',institusi:'SMA Negeri 5 Bandung',jumlah:'Rp 3.000.000',periode:'Tahun Ajaran 2024/2025',tgl:'10 Jul 2024',status:'active'},
+    {pegawai:1,anak:'Aisha Nurhaliza / SD',institusi:'SD Cendekia BAZNAS',jumlah:'Rp 2.500.000',periode:'Tahun Ajaran 2024/2025',tgl:'10 Jul 2024',status:'active'},
+    {pegawai:2,anak:'Bima Santoso / Kuliah',institusi:'Institut Teknologi Bandung',jumlah:'Rp 8.000.000',periode:'Semester Ganjil 2024',tgl:'01 Sep 2024',status:'active'},
+    {pegawai:3,anak:'Citra Lestari / SMP',institusi:'SMP Negeri 3 Jakarta',jumlah:'Rp 2.000.000',periode:'Tahun Ajaran 2024/2025',tgl:'10 Jul 2024',status:'pending'},
+    {pegawai:4,anak:'Doni Prasetyo / Kuliah',institusi:'Universitas Indonesia',jumlah:'Rp 7.500.000',periode:'Semester Ganjil 2024',tgl:'01 Sep 2024',status:'active'}
   ],
   kesehatanData: [
-    {pegawai:0,penerima:'Andi Wijaya (Diri sendiri)',diagnosa:'Tindikosis',rs:'RS Hasan Sadikin',klaim:'Rp 4.200.000',status:'approved'},
-    {pegawai:1,penerima:'Aisyah Nurhaliza (Anak)',diagnosa:'Demam tifoid',rs:'RS Mitra Keluarga',klaim:'Rp 3.500.000',status:'approved'},
-    {pegawai:2,penerima:'Budi Santoso (Istri)',diagnosa:'Persalinan',rs:'RS Bunda Jakarta',klaim:'Rp 12.000.000',status:'approved'},
-    {pegawai:3,penerima:'Citra Lestari (Diri sendiri)',diagnosa:'Pemeriksaan gigi',rs:'Klinik Gigi Sehat',klaim:'Rp 1.800.000',status:'pending'},
-    {pegawai:4,penerima:'Doni Prasetyo (Anak)',diagnosa:'ISPA',rs:'RS Hermina',klaim:'Rp 2.300.000',status:'approved'}
+    {pegawai:0,penerima:'Andi Wijaya (Diri sendiri)',diagnosa:'Tindikosis',rs:'RS Hasan Sadikin',klaim:'Rp 4.200.000',tgl:'05 Sep 2024',status:'approved'},
+    {pegawai:1,penerima:'Aisyah Nurhaliza (Anak)',diagnosa:'Demam tifoid',rs:'RS Mitra Keluarga',klaim:'Rp 3.500.000',tgl:'12 Agt 2024',status:'approved'},
+    {pegawai:2,penerima:'Budi Santoso (Istri)',diagnosa:'Persalinan',rs:'RS Bunda Jakarta',klaim:'Rp 12.000.000',tgl:'20 Jun 2024',status:'approved'},
+    {pegawai:3,penerima:'Citra Lestari (Diri sendiri)',diagnosa:'Pemeriksaan gigi',rs:'Klinik Gigi Sehat',klaim:'Rp 1.800.000',tgl:'15 Okt 2024',status:'pending'},
+    {pegawai:4,penerima:'Doni Prasetyo (Anak)',diagnosa:'ISPA',rs:'RS Hermina',klaim:'Rp 2.300.000',tgl:'02 Feb 2024',status:'approved'}
   ],
   musibahData: [
     {pegawai:0,jenis:'Kebakaran Rumah',tgl:'12 Sep 2024',bantuan:'Rp 15.000.000',status:'completed'},
@@ -1005,7 +1017,6 @@ function initials(name){return name.split(' ').slice(0,2).map(w=>w[0]).join('').
 function badgeHtml(status){const map={pending:['Menunggu','badge-pending','fa-clock'],approved:['Disetujui','badge-approved','fa-check'],rejected:['Ditolak','badge-rejected','fa-xmark'],active:['Aktif','badge-active','fa-circle-check'],completed:['Selesai','badge-completed','fa-check-double']};const [label,cls,icon]=map[status]||['Pending','badge-pending','fa-clock'];return `<span class="badge ${cls}"><i class="fa-solid ${icon}"></i> ${label}</span>`;}
 function avatar(idx,size=36){const p=pegawai[idx];if(!p)return '';return `<div class="flex items-center gap-3"><div class="rounded-full flex items-center justify-center font-bold" style="width:${size}px;height:${size}px;background:linear-gradient(135deg,${p.color},#22d3ee);color:#04231b;font-size:${size*0.35}px">${initials(p.nama)}</div><div><div class="font-semibold text-sm">${p.nama}</div><div class="text-xs" style="color:var(--muted)">${p.dept} · ${p.jabatan}</div></div></div>`;}
 
-// ===== PERBAIKAN: actionBtns sekarang memanggil viewEntry() untuk tombol View =====
 function actionBtns(type, idx){
   return `<div class="flex items-center justify-end gap-1">
     <button onclick="viewEntry('${type}', ${idx})" class="btn-ghost w-8 h-8 rounded-lg flex items-center justify-center" title="Lihat Detail"><i class="fa-solid fa-eye text-xs"></i></button>
@@ -1040,7 +1051,6 @@ function akunActionBtns(idx) {
   </div>`;
 }
 
-// ===== FUNGSI BARU: viewEntry - untuk menampilkan detail setiap entri =====
 function viewEntry(type, idx) {
   let data;
   if (type === 'kasbon') data = kasbonData[idx];
@@ -1066,7 +1076,6 @@ function viewEntry(type, idx) {
     }
   };
 
-  // Header info pegawai
   if (peg) {
     addRow('Pegawai', peg.nama);
     addRow('NIP', peg.nip);
@@ -1074,7 +1083,6 @@ function viewEntry(type, idx) {
     addRow('Jabatan', peg.jabatan);
   }
 
-  // Detail per jenis
   if (type === 'kasbon') {
     addRow('Kategori', capitalize(data.kategori));
     addRow('Tanggal Pengajuan', data.tgl);
@@ -1083,11 +1091,13 @@ function viewEntry(type, idx) {
     addRow('Sisa Cicilan', data.sisa);
     if(data.progress !== undefined) addRow('Progress', data.progress + '%');
   } else if (type === 'softloan') {
+    addRow('Tanggal', data.tgl);
     addRow('Tipe Laptop', data.laptop);
     addRow('Nilai', data.nilai);
     addRow('Tenor', data.tenor);
     addRow('Cicilan/Bulan', data.cicilan);
   } else if (type === 'sewarumah') {
+    addRow('Tanggal', data.tgl);
     addRow('Lokasi', data.lokasi);
     addRow('Sewa per Bulan', data.sewa);
     addRow('Subsidi', data.subsidi);
@@ -1110,18 +1120,20 @@ function viewEntry(type, idx) {
     addRow('Penerima/Sumber', data.penerima);
     addRow('Jumlah', data.jumlah);
   } else if (type === 'pendidikan') {
+    addRow('Tanggal', data.tgl);
     addRow('Nama Anak / Jenjang', data.anak);
     addRow('Institusi', data.institusi);
     addRow('Jumlah Bantuan', data.jumlah);
     addRow('Periode', data.periode);
   } else if (type === 'kesehatan') {
+    addRow('Tanggal', data.tgl);
     addRow('Penerima Manfaat', data.penerima);
     addRow('Diagnosa', data.diagnosa);
     addRow('RS/Faskes', data.rs);
     addRow('Klaim', data.klaim);
   } else if (type === 'musibah') {
+    addRow('Tanggal', data.tgl);
     addRow('Jenis Musibah', data.jenis);
-    addRow('Tanggal Kejadian', data.tgl);
     addRow('Bantuan Diberikan', data.bantuan);
   } else {
     addRow('Jumlah/Nilai', data.jumlah || '-');
@@ -1504,7 +1516,9 @@ function renderKeuangan() {
     saldoPerAkun[ak.id] = { nama: ak.nama, saldoAwal: ak.saldoAwal, masuk: 0, keluar: 0, saldoAkhir: ak.saldoAwal, color: ak.color };
   });
 
-  keuanganData.forEach(trx => {
+  const yearFilteredTrx = keuanganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear);
+  
+  yearFilteredTrx.forEach(trx => {
     if(trx.jenis === 'pemasukan') {
       totalPemasukan += trx.jumlah;
       if(saldoPerAkun[trx.akunId]) {
@@ -1527,7 +1541,7 @@ function renderKeuangan() {
   document.getElementById('keuTotalPengeluaran').textContent = formatRupiah(totalPengeluaran);
   document.getElementById('keuSaldoAkhir').textContent = formatRupiah(totalSaldoAkhir);
 
-  const sortedTrx = [...keuanganData].sort((a,b) => new Date(b.tgl) - new Date(a.tgl));
+  const sortedTrx = [...yearFilteredTrx].sort((a,b) => new Date(b.tgl) - new Date(a.tgl));
   document.getElementById('keuanganTable').innerHTML = sortedTrx.map((t) => {
     const originalIdx = keuanganData.indexOf(t);
     const akun = akunKeuangan.find(a => a.id === t.akunId);
@@ -1654,7 +1668,6 @@ function confirmDeleteAkun(idx) {
   openModal('modalDeleteEntry');
 }
 
-// FUNGSI HAPUS ENTRI (DIGABUNGKAN)
 function deleteEntry() {
   let success = false;
   let msg = '';
@@ -1747,10 +1760,57 @@ function initKeuanganCharts(saldoPerAkun, totalPemasukan, totalPengeluaran) {
 }
 
 // ===== DASBOR & TABEL LAINNYA =====
+function getYearFromDate(dateStr) {
+  if(!dateStr) return new Date().getFullYear();
+  const match = String(dateStr).match(/20\d{2}/);
+  if(match) return parseInt(match[0]);
+  const d = new Date(dateStr);
+  if(!isNaN(d.getTime())) return d.getFullYear();
+  return new Date().getFullYear();
+}
+
+const monthMap = { 'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'mei': 4, 'jun': 5, 'jul': 6, 'ags': 7, 'sep': 8, 'okt': 9, 'nov': 10, 'des': 11 };
+function getMonthFromDate(dateStr) {
+  if(!dateStr) return -1;
+  const str = String(dateStr).toLowerCase();
+  for(const key in monthMap) {
+    if(str.includes(key)) return monthMap[key];
+  }
+  const d = new Date(dateStr);
+  if(!isNaN(d.getTime())) return d.getMonth();
+  return -1;
+}
+
+function populateYearFilter() {
+  const sel = document.getElementById('globalYearFilter');
+  if(!sel) return;
+  let years = new Set();
+  const currentYear = new Date().getFullYear();
+  years.add(currentYear);
+  years.add(currentYear - 1);
+  years.add(currentYear - 2);
+  years.add(currentYear + 1);
+  
+  [...kasbonData, ...tabunganData, ...infaqData, ...musibahData, ...sewarumahData, ...softloanData, ...pendidikanData, ...kesehatanData, ...keuanganData].forEach(item => {
+    const y = getYearFromDate(item.tgl || item.periode);
+    years.add(y);
+  });
+  
+  const sortedYears = Array.from(years).sort((a,b) => b-a);
+  sel.innerHTML = sortedYears.map(y => `<option value="${y}" ${y === currentFilterYear ? 'selected' : ''}>Tahun ${y}</option>`).join('');
+}
+
+function applyYearFilter(year) {
+  currentFilterYear = parseInt(year);
+  document.querySelectorAll('.year-label').forEach(el => el.textContent = currentFilterYear);
+  renderAll();
+}
+
 function filterPegawai(){pegawaiFilterText=document.getElementById('pegawaiSearch').value.toLowerCase();renderPegawai();}
 function filterKasbon(cat, btn) { kasbonFilter = cat; document.querySelectorAll('#view-kasbon .tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderKasbon(); }
 function renderKasbon(){
-  let filtered = kasbonData; if(kasbonFilter !== 'all') { filtered = kasbonData.filter(k => k.kategori === kasbonFilter); }
+  let filtered = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear); 
+  if(kasbonFilter !== 'all') { filtered = filtered.filter(k => k.kategori === kasbonFilter); }
   filtered.sort((a, b) => {
     const aPrior = a.kategori === 'pendidikan' || a.kategori === 'kesehatan';
     const bPrior = b.kategori === 'pendidikan' || b.kategori === 'kesehatan';
@@ -1760,6 +1820,7 @@ function renderKasbon(){
     if(a.status !== 'pending' && b.status === 'pending') return 1;
     return 0;
   });
+  if(filtered.length === 0) { document.getElementById('kasbonTable').innerHTML = `<tr><td colspan="8" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
   document.getElementById('kasbonTable').innerHTML = filtered.map(k => {
     const idx = kasbonData.indexOf(k);
     const isPriority = k.kategori === 'pendidikan' || k.kategori === 'kesehatan';
@@ -1771,7 +1832,9 @@ function renderKasbon(){
 
 function filterTabungan(cat, btn) { tabunganFilter = cat; document.querySelectorAll('#view-tabungan .tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderTabungan(); }
 function renderTabungan(){
-  let filtered = tabunganData; if(tabunganFilter !== 'all') { filtered = tabunganData.filter(t => t.kategori === tabunganFilter); }
+  let filtered = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear); 
+  if(tabunganFilter !== 'all') { filtered = filtered.filter(t => t.kategori === tabunganFilter); }
+  if(filtered.length === 0) { document.getElementById('tabunganTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
   document.getElementById('tabunganTable').innerHTML = filtered.map(t => { 
     const idx = tabunganData.indexOf(t);
     const isSetoran = t.jenis === 'Setoran'; const cat = tabunganKategoriMap[t.kategori] || tabunganKategoriMap.lainnya; 
@@ -1783,7 +1846,9 @@ function renderTabungan(){
 
 function filterInfaq(cat, btn) { infaqFilter = cat; document.querySelectorAll('#view-infaq .tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderInfaq(); }
 function renderInfaq(){
-  let filtered = infaqData; if(infaqFilter !== 'all') { filtered = infaqData.filter(i => i.kategori === infaqFilter); }
+  let filtered = infaqData.filter(i => getYearFromDate(i.tgl) === currentFilterYear); 
+  if(infaqFilter !== 'all') { filtered = filtered.filter(i => i.kategori === infaqFilter); }
+  if(filtered.length === 0) { document.getElementById('infaqTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
   document.getElementById('infaqTable').innerHTML = filtered.map(i => { 
     const idx = infaqData.indexOf(i);
     const isSetoran = i.jenis === 'Setoran'; const cat = infaqKategoriMap[i.kategori] || infaqKategoriMap.lainnya; 
@@ -1792,19 +1857,50 @@ function renderInfaq(){
 }
 
 function renderSewarumah(){
-  document.getElementById('sewarumahTable').innerHTML = sewarumahData.map((s, idx) => { 
+  let filtered = sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear);
+  if(filtered.length === 0) { document.getElementById('sewarumahTable').innerHTML = `<tr><td colspan="8" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
+  document.getElementById('sewarumahTable').innerHTML = filtered.map(s => { 
+    const idx = sewarumahData.indexOf(s);
     const docs = s.docs; const docList = [{name:'KTP', val:docs.ktp}, {name:'Photo', val:docs.photo}, {name:'Kwitansi', val:docs.kwitansi}]; 
     return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(s.pegawai)}</td><td class="p-4 text-sm">${s.lokasi}</td><td class="p-4 text-sm">${s.sewa}</td><td class="p-4 font-semibold" style="color:var(--accent)">${s.subsidi}</td><td class="p-4 text-xs" style="color:var(--muted)">${s.periode}</td><td class="p-4"><div class="flex gap-2">${docList.map(d => `<span title="${d.name}" class="text-xs flex items-center gap-1 ${d.val?'text-emerald-400':'text-red-400'}"><i class="fa-solid ${d.val?'fa-circle-check':'fa-circle-xmark'}"></i> ${d.name}</span>`).join('')}</div></td><td class="p-4">${badgeHtml(s.status)}</td><td class="p-4">${actionBtns('sewarumah', idx)}</td></tr>`; 
   }).join('');
 }
 
-function renderSoftloan(){document.getElementById('softloanTable').innerHTML=softloanData.map((s, idx)=>`<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(s.pegawai)}</td><td class="p-4 text-sm font-semibold">${s.laptop}</td><td class="p-4 font-semibold">${s.nilai}</td><td class="p-4 text-sm">${s.tenor}</td><td class="p-4 text-sm">${s.cicilan}</td><td class="p-4">${badgeHtml(s.status)}</td><td class="p-4">${actionBtns('softloan', idx)}</td></tr>`).join('');}
+function renderSoftloan(){
+  let filtered = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear);
+  if(filtered.length === 0) { document.getElementById('softloanTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
+  document.getElementById('softloanTable').innerHTML=filtered.map(s => {
+    const idx = softloanData.indexOf(s);
+    return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(s.pegawai)}</td><td class="p-4 text-sm font-semibold">${s.laptop}</td><td class="p-4 font-semibold">${s.nilai}</td><td class="p-4 text-sm">${s.tenor}</td><td class="p-4 text-sm">${s.cicilan}</td><td class="p-4">${badgeHtml(s.status)}</td><td class="p-4">${actionBtns('softloan', idx)}</td></tr>`;
+  }).join('');
+}
 
-function renderPendidikan(){document.getElementById('pendidikanTable').innerHTML=pendidikanData.map((p, idx)=>`<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(p.pegawai)}</td><td class="p-4 text-sm">${p.anak}</td><td class="p-4 text-sm">${p.institusi}</td><td class="p-4 font-semibold">${p.jumlah}</td><td class="p-4 text-xs" style="color:var(--muted)">${p.periode}</td><td class="p-4">${badgeHtml(p.status)}</td><td class="p-4">${actionBtns('pendidikan', idx)}</td></tr>`).join('');}
+function renderPendidikan(){
+  let filtered = pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear);
+  if(filtered.length === 0) { document.getElementById('pendidikanTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
+  document.getElementById('pendidikanTable').innerHTML=filtered.map(p => {
+    const idx = pendidikanData.indexOf(p);
+    return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(p.pegawai)}</td><td class="p-4 text-sm">${p.anak}</td><td class="p-4 text-sm">${p.institusi}</td><td class="p-4 font-semibold">${p.jumlah}</td><td class="p-4 text-xs" style="color:var(--muted)">${p.periode}</td><td class="p-4">${badgeHtml(p.status)}</td><td class="p-4">${actionBtns('pendidikan', idx)}</td></tr>`;
+  }).join('');
+}
 
-function renderKesehatan(){document.getElementById('kesehatanTable').innerHTML=kesehatanData.map((k, idx)=>`<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(k.pegawai)}</td><td class="p-4 text-sm">${k.penerima}</td><td class="p-4 text-sm">${k.diagnosa}</td><td class="p-4 text-sm">${k.rs}</td><td class="p-4 font-semibold">${k.klaim}</td><td class="p-4">${badgeHtml(k.status)}</td><td class="p-4">${actionBtns('kesehatan', idx)}</td></tr>`).join('');}
+function renderKesehatan(){
+  let filtered = kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear);
+  if(filtered.length === 0) { document.getElementById('kesehatanTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
+  document.getElementById('kesehatanTable').innerHTML=filtered.map(k => {
+    const idx = kesehatanData.indexOf(k);
+    return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(k.pegawai)}</td><td class="p-4 text-sm">${k.penerima}</td><td class="p-4 text-sm">${k.diagnosa}</td><td class="p-4 text-sm">${k.rs}</td><td class="p-4 font-semibold">${k.klaim}</td><td class="p-4">${badgeHtml(k.status)}</td><td class="p-4">${actionBtns('kesehatan', idx)}</td></tr>`;
+  }).join('');
+}
 
-function renderMusibah(){document.getElementById('musibahTable').innerHTML=musibahData.map((m, idx)=>`<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(m.pegawai)}</td><td class="p-4 text-sm font-semibold">${m.jenis}</td><td class="p-4 text-sm">${m.tgl}</td><td class="p-4 font-semibold" style="color:var(--accent-2)">${m.bantuan}</td><td class="p-4">${badgeHtml(m.status)}</td><td class="p-4">${actionBtns('musibah', idx)}</td></tr>`).join('');}
+function renderMusibah(){
+  let filtered = musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear);
+  if(filtered.length === 0) { document.getElementById('musibahTable').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
+  document.getElementById('musibahTable').innerHTML=filtered.map(m => {
+    const idx = musibahData.indexOf(m);
+    return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4">${avatar(m.pegawai)}</td><td class="p-4 text-sm font-semibold">${m.jenis}</td><td class="p-4 text-sm">${m.tgl}</td><td class="p-4 font-semibold" style="color:var(--accent-2)">${m.bantuan}</td><td class="p-4">${badgeHtml(m.status)}</td><td class="p-4">${actionBtns('musibah', idx)}</td></tr>`;
+  }).join('');
+}
 
 function renderPegawai(){
   const filtered = pegawai.filter(p => !pegawaiFilterText || p.nama.toLowerCase().includes(pegawaiFilterText) || p.nip.toLowerCase().includes(pegawaiFilterText) || p.dept.toLowerCase().includes(pegawaiFilterText) || (p.bidang && p.bidang.toLowerCase().includes(pegawaiFilterText)));
@@ -1819,7 +1915,7 @@ function renderApprovalList() {
   const items = [];
   const mapData = (array, type, icon, color, getAmt) => {
     array.forEach((item, i) => {
-      if (item.status === 'pending') {
+      if (item.status === 'pending' && getYearFromDate(item.tgl) === currentFilterYear) {
         items.push({
           type, idx: i, icon, color, status: 'pending', priority: type === 'kasbon' && (item.kategori === 'pendidikan' || item.kategori === 'kesehatan'),
           pgw: item.pegawai !== undefined ? item.pegawai : item.pgw, 
@@ -1837,6 +1933,8 @@ function renderApprovalList() {
   mapData(musibahData, 'musibah', 'fa-hands-helping', '#fb923c', m => m.bantuan);
   mapData(tabunganData, 'tabungan', 'fa-piggy-bank', '#34d399', t => t.jumlah);
   mapData(infaqData, 'infaq', 'fa-hand-holding-heart', '#10b981', i => i.jumlah);
+
+  if(items.length === 0) { document.getElementById('approvalList').innerHTML = `<div class="glass rounded-xl p-8 text-center text-sm" style="color:var(--muted)">Tidak ada pengajuan menunggu persetujuan untuk tahun ${currentFilterYear}</div>`; return; }
 
   document.getElementById('approvalList').innerHTML = items.map(r => `
     <div class="glass rounded-xl p-4 hover:scale-[1.005] transition" style="${r.priority?'border:1px solid rgba(248,113,113,0.3);background:linear-gradient(90deg, rgba(248,113,113,0.05), transparent);':''}">
@@ -1891,9 +1989,137 @@ function approveEntry(type, idx) {
 
 function renderRecent(){const recent=[{pgw:0,type:'kasbon',idx:0,label:'Kasbon Kesehatan',amt:'Rp 15.000.000',time:'2 jam lalu',status:'pending',icon:'fa-heart-pulse',color:'#f87171'},{pgw:1,type:'kasbon',idx:1,label:'Kasbon Pendidikan',amt:'Rp 8.000.000',time:'5 jam lalu',status:'pending',icon:'fa-graduation-cap',color:'#60a5fa'},{pgw:2,type:'kesehatan',idx:0,label:'Bantuan Kesehatan',amt:'Rp 4.200.000',time:'1 hari lalu',status:'approved',icon:'fa-heart-pulse',color:'#f87171'},{pgw:3,type:'pendidikan',idx:0,label:'Bantuan Pendidikan',amt:'Rp 2.000.000',time:'1 hari lalu',status:'pending',icon:'fa-graduation-cap',color:'#60a5fa'},{pgw:4,type:'musibah',idx:0,label:'Bantuan Musibah',amt:'Rp 15.000.000',time:'2 hari lalu',status:'pending',icon:'fa-hands-helping',color:'#fb923c'}];document.getElementById('recentList').innerHTML=recent.map(r=>`<div onclick="viewEntry('${r.type}', ${r.idx})" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition cursor-pointer"><div class="icon-tile" style="background:${r.color}22;color:${r.color};width:36px;height:36px;font-size:.85rem"><i class="fa-solid ${r.icon}"></i></div><div class="flex-1 min-w-0"><div class="text-sm font-semibold truncate">${pegawai[r.pgw]?.nama || 'N/A'}</div><div class="text-xs" style="color:var(--muted)">${r.label} · ${r.amt}</div></div><div class="text-right">${badgeHtml(r.status)}<div class="text-[10px] mt-1" style="color:var(--muted)">${r.time}</div></div></div>`).join('');}
 function renderPrograms(){document.getElementById('programGrid').innerHTML=programs.map(p=>`<button onclick="openModal('modalPengajuan','${p.id}')" class="text-left p-4 rounded-xl border transition hover:scale-[1.03]" style="border-color:var(--border);background:rgba(255,255,255,0.02)"><div class="icon-tile mb-3" style="background:${hexToRgba(p.color, 0.15)};color:${p.color}"><i class="fa-solid ${p.icon}"></i></div><div class="font-semibold text-sm">${p.label}</div><div class="text-xs mt-0.5" style="color:var(--muted)">${p.desc}</div></button>`).join('');}
-function renderApprovalRate(){const items=[{name:'Kasbon',rate:92,total:34,approved:31,color:'#fbbf24'},{name:'Softloan Laptop',rate:88,total:17,approved:15,color:'#22d3ee'},{name:'Sewa Rumah',rate:95,total:22,approved:21,color:'#a78bfa'},{name:'Bantuan Pendidikan',rate:90,total:40,approved:36,color:'#60a5fa'},{name:'Bantuan Kesehatan',rate:96,total:50,approved:48,color:'#f87171'},{name:'Bantuan Musibah',rate:100,total:16,approved:16,color:'#fb923c'}];document.getElementById('approvalRate').innerHTML=items.map(i=>`<div><div class="flex items-center justify-between text-xs mb-1.5"><span class="font-semibold">${i.name}</span><span style="color:var(--muted)">${i.approved}/${i.total} · <span style="color:${i.color};font-weight:700">${i.rate}%</span></span></div><div class="progress-bar"><div class="progress-fill" style="width:${i.rate}%;background:linear-gradient(90deg,${i.color},${i.color}aa)"></div></div></div>`).join('');}
+function renderApprovalRate(){
+  const items = [
+    {name:'Kasbon', data: kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear)},
+    {name:'Softloan Laptop', data: softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear)},
+    {name:'Sewa Rumah', data: sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear)},
+    {name:'Bantuan Pendidikan', data: pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear)},
+    {name:'Bantuan Kesehatan', data: kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear)},
+    {name:'Bantuan Musibah', data: musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear)}
+  ];
+  const colors = ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'];
+  let html = '';
+  items.forEach((i, idx) => {
+    const total = i.data.length;
+    const approved = i.data.filter(x => x.status === 'approved' || x.status === 'active' || x.status === 'completed').length;
+    const rate = total > 0 ? Math.round((approved / total) * 100) : 0;
+    html += `<div>
+      <div class="flex items-center justify-between text-xs mb-1.5">
+        <span class="font-semibold">${i.name}</span>
+        <span style="color:var(--muted)">${approved}/${total} · <span style="color:${colors[idx]};font-weight:700">${rate}%</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${rate}%;background:linear-gradient(90deg,${colors[idx]},${colors[idx]}aa)"></div></div>
+    </div>`;
+  });
+  document.getElementById('approvalRate').innerHTML = html;
+}
 
-function initCharts(){const ctx1=document.getElementById('chartTrend').getContext('2d');new Chart(ctx1,{type:'line',data:{labels:['Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt'],datasets:[{label:'Pinjaman',data:[120,180,150,220,195,240,210,287],borderColor:'#34d399',backgroundColor:'rgba(52,211,153,0.15)',tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#34d399',borderWidth:2},{label:'Bantuan',data:[80,95,110,85,130,105,140,135],borderColor:'#fbbf24',backgroundColor:'rgba(251,191,36,0.1)',tension:.4,fill:true,pointRadius:3,pointBackgroundColor:'#fbbf24',borderWidth:2}]},options:chartOpts()});const ctx2=document.getElementById('chartPie').getContext('2d');new Chart(ctx2,{type:'doughnut',data:{labels:['Kasbon','Softloan','Sewa Rumah','Pendidikan','Kesehatan','Musibah'],datasets:[{data:[34,17,22,40,50,16],backgroundColor:['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{color:'#8aa399',padding:12,font:{size:10}}}},cutout:'65%'}});const ctx3=document.getElementById('chartTabungan').getContext('2d');new Chart(ctx3,{type:'bar',data:{labels:['Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt'],datasets:[{label:'Setoran (Juta)',data:[145,162,178,189,201,218,231,248],backgroundColor:'rgba(52,211,153,0.6)',borderColor:'#34d399',borderWidth:1,borderRadius:6}]},options:chartOpts(true)});const ctx4=document.getElementById('chartBar').getContext('2d');new Chart(ctx4,{type:'bar',data:{labels:['Kasbon','Softloan','Sewa Rmh','Pendidikan','Kesehatan','Musibah'],datasets:[{label:'Realisasi 2024 (Juta Rp)',data:[487,684,1200,234,156,122],backgroundColor:['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'],borderRadius:6}]},options:{...chartOpts(),plugins:{legend:{display:false}}}});}
+function updateDashboardStats() {
+  const totalKasbon = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.pokok), 0);
+  const totalSoftloan = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length;
+  const totalTabungan = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear).reduce((sum, t) => sum + Math.abs(parseRupiah(t.jumlah)), 0);
+  const totalBantuan = [...sewarumahData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).reduce((sum, item) => sum + parseRupiah(item.subsidi || item.jumlah || item.klaim || item.bantuan || 0), 0);
+
+  document.getElementById('statKasbon').textContent = formatShortRupiah(totalKasbon);
+  document.getElementById('statSoftloan').textContent = totalSoftloan + ' unit';
+  document.getElementById('statTabungan').textContent = formatShortRupiah(totalTabungan);
+  document.getElementById('statBantuan').textContent = formatShortRupiah(totalBantuan);
+}
+
+function initCharts(){
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+  
+  const ctx1 = document.getElementById('chartTrend')?.getContext('2d');
+  if (ctx1) {
+    if (window.chartTrendInstance) window.chartTrendInstance.destroy();
+    const pinjamanData = new Array(12).fill(0);
+    const bantuanData = new Array(12).fill(0);
+
+    [...kasbonData, ...softloanData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).forEach(item => {
+      const m = getMonthFromDate(item.tgl);
+      if(m > -1) {
+        const val = item.pokok || item.nilai || '0';
+        pinjamanData[m] += parseRupiah(val);
+      }
+    });
+
+    [...sewarumahData, ...tabunganData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).forEach(item => {
+      const m = getMonthFromDate(item.tgl);
+      if(m > -1) {
+        const val = item.subsidi || item.jumlah || item.klaim || item.bantuan || '0';
+        bantuanData[m] += Math.abs(parseRupiah(val));
+      }
+    });
+
+    window.chartTrendInstance = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'Pinjaman (Juta)', data: pinjamanData.map(v => v/1000000), borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.15)', tension: .4, fill: true, pointRadius: 3, pointBackgroundColor: '#34d399', borderWidth: 2 },
+          { label: 'Bantuan (Juta)', data: bantuanData.map(v => v/1000000), borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.1)', tension: .4, fill: true, pointRadius: 3, pointBackgroundColor: '#fbbf24', borderWidth: 2 }
+        ]
+      },
+      options: chartOpts()
+    });
+  }
+
+  const ctx2 = document.getElementById('chartPie')?.getContext('2d');
+  if (ctx2) {
+    if (window.chartPieInstance) window.chartPieInstance.destroy();
+    const pieData = [
+      kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).length,
+      softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length,
+      sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length,
+      pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).length,
+      kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).length,
+      musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).length
+    ];
+    window.chartPieInstance = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Kasbon','Softloan','Sewa Rumah','Pendidikan','Kesehatan','Musibah'],
+        datasets: [{ data: pieData, backgroundColor: ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'], borderWidth: 0 }]
+      },
+      options: { plugins: { legend: { position: 'bottom', labels: { color: '#8aa399', padding: 12, font: { size: 10 } } } }, cutout: '65%' }
+    });
+  }
+
+  const ctx3 = document.getElementById('chartTabungan')?.getContext('2d');
+  if (ctx3) {
+    if (window.chartTabunganInstance) window.chartTabunganInstance.destroy();
+    const tabunganMonthly = new Array(12).fill(0);
+    tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear).forEach(t => {
+      const m = getMonthFromDate(t.tgl);
+      if(m > -1) tabunganMonthly[m] += parseRupiah(t.jumlah);
+    });
+    window.chartTabunganInstance = new Chart(ctx3, {
+      type: 'bar',
+      data: { labels: months, datasets: [{ label: 'Setoran (Juta)', data: tabunganMonthly.map(v => v/1000000), backgroundColor: 'rgba(52,211,153,0.6)', borderColor: '#34d399', borderWidth: 1, borderRadius: 6 }] },
+      options: chartOpts(true)
+    });
+  }
+
+  const ctx4 = document.getElementById('chartBar')?.getContext('2d');
+  if (ctx4) {
+    if (window.chartBarInstance) window.chartBarInstance.destroy();
+    const barData = [
+      kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.pokok), 0) / 1000000,
+      softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).reduce((sum, s) => sum + parseRupiah(s.nilai), 0) / 1000000,
+      sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).reduce((sum, s) => sum + parseRupiah(s.subsidi), 0) / 1000000,
+      pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).reduce((sum, p) => sum + parseRupiah(p.jumlah), 0) / 1000000,
+      kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.klaim), 0) / 1000000,
+      musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).reduce((sum, m) => sum + parseRupiah(m.bantuan), 0) / 1000000
+    ];
+    window.chartBarInstance = new Chart(ctx4, {
+      type: 'bar',
+      data: { labels: ['Kasbon','Softloan','Sewa Rmh','Pendidikan','Kesehatan','Musibah'], datasets: [{ label: `Realisasi ${currentFilterYear} (Juta Rp)`, data: barData, backgroundColor: ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'], borderRadius: 6 }] },
+      options: { ...chartOpts(), plugins: { legend: { display: false } } }
+    });
+  }
+}
+
 function chartOpts(horizontal=false){return{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:!horizontal,labels:{color:'#8aa399',font:{size:11},usePointStyle:true,pointStyle:'circle'}}},scales:{x:{grid:{display:false},ticks:{color:'#8aa399',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#8aa399',font:{size:10}}}}};}
 
 const pageMeta={dashboard:['Dashboard','Ringkasan program kesejahteraan pegawai'],pengajuan:['Pengajuan Baru','Buat pengajuan program kesejahteraan'],persetujuan:['Persetujuan','Daftar pengajuan menunggu approval Anda'],kasbon:['Kasbon','Pinjaman tunai untuk kebutuhan mendesak pegawai'],softloan:['Softloan Laptop','Pembiayaan perangkat kerja pegawai'],sewarumah:['Sewa Rumah','Subsidi tempat tinggal pegawai & kelengkapan dokumen'],tabungan:['Tabungan SDM','Program tabungan & potong payroll karyawan'],infaq:['Infaq SDM','Penyaluran infaq karyawan untuk berbagai kebutuhan'],pendidikan:['Bantuan Pendidikan','Bantuan biaya pendidikan anak pegawai'],kesehatan:['Bantuan Kesehatan','Klaim biaya medis pegawai & keluarga'],musibah:['Bantuan Musibah','Bantuan darurat untuk korban musibah'],keuangan:['Laporan Keuangan','Manajemen kas, akun, dan aliran kas'],pegawai:['Data Pegawai','Daftar seluruh pegawai aktif'],program:['Data Program','Kelola daftar jenis program kesejahteraan & bantuan'],laporan:['Laporan Program','Rekap & analisis realisasi program'],pengaturan:['Pengaturan','Konfigurasi sistem & kebijakan']};
@@ -1992,15 +2218,20 @@ function submitForm(e){
   const val = (id) => document.getElementById(id)?.value || '';
   let isEdit = editingEntryType !== null && editingEntryIdx >= 0;
   if(v === 'kasbon') { const payload = {pegawai: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), tgl: today, pokok: val('fld_jumlah'), tenor: val('fld_tenor') + ' bln', sisa: val('fld_jumlah'), catatan}; if(isEdit) { kasbonData[editingEntryIdx] = {...kasbonData[editingEntryIdx], ...payload}; } else { kasbonData.push({...payload, status: 'pending', progress: 0}); } renderKasbon();
-  } else if (v === 'softloan') { const payload = {pegawai: pegawaiIdx, laptop: val('fld_tipe'), nilai: val('fld_harga'), tenor: val('fld_tenor') + ' bln', cicilan: val('fld_cicilanbulan'), catatan}; if(isEdit) { softloanData[editingEntryIdx] = {...softloanData[editingEntryIdx], ...payload}; } else { softloanData.push({...payload, status: 'pending'}); } renderSoftloan();
-  } else if (v === 'sewarumah') { const payload = {pegawai: pegawaiIdx, lokasi: val('fld_alamat'), sewa: val('fld_sewa'), subsidi: val('fld_subsidi'), periode: val('fld_mulai') || 'N/A', catatan}; if(isEdit) { sewarumahData[editingEntryIdx] = {...sewarumahData[editingEntryIdx], ...payload}; } else { sewarumahData.push({...payload, status: 'pending', docs: {ktp: true, photo: true, kwitansi: true}}); } renderSewarumah();
+  } else if (v === 'softloan') { const payload = {pegawai: pegawaiIdx, laptop: val('fld_tipe'), nilai: val('fld_harga'), tenor: val('fld_tenor') + ' bln', cicilan: val('fld_cicilanbulan'), tgl: today, catatan}; if(isEdit) { softloanData[editingEntryIdx] = {...softloanData[editingEntryIdx], ...payload}; } else { softloanData.push({...payload, status: 'pending'}); } renderSoftloan();
+  } else if (v === 'sewarumah') { const payload = {pegawai: pegawaiIdx, lokasi: val('fld_alamat'), sewa: val('fld_sewa'), subsidi: val('fld_subsidi'), periode: val('fld_mulai') || 'N/A', tgl: today, catatan}; if(isEdit) { sewarumahData[editingEntryIdx] = {...sewarumahData[editingEntryIdx], ...payload}; } else { sewarumahData.push({...payload, status: 'pending', docs: {ktp: true, photo: true, kwitansi: true}}); } renderSewarumah();
   } else if (v === 'tabungan') { const payload = {tgl: today, pegawai: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), jenis: val('fld_jenis'), jumlah: val('fld_jumlah'), saldo: 'Rp 0', catatan}; if(isEdit) { tabunganData[editingEntryIdx] = {...tabunganData[editingEntryIdx], ...payload}; } else { tabunganData.push(payload); } renderTabungan();
   } else if (v === 'infaq') { const payload = {tgl: today, pgw: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), jenis: val('fld_jenis'), penerima: val('fld_penerima'), jumlah: val('fld_jumlah'), catatan}; if(isEdit) { infaqData[editingEntryIdx] = {...infaqData[editingEntryIdx], ...payload}; } else { infaqData.push({...payload, status: 'pending'}); } renderInfaq();
-  } else if (v === 'pendidikan') { const payload = {pegawai: pegawaiIdx, anak: `${val('fld_nama')} / ${val('fld_jenjang')}`, institusi: val('fld_institusi'), periode: val('fld_semestertahun'), catatan}; if(isEdit) { pendidikanData[editingEntryIdx] = {...pendidikanData[editingEntryIdx], ...payload, jumlah: pendidikanData[editingEntryIdx].jumlah}; } else { pendidikanData.push({...payload, jumlah: 'Rp 0', status: 'pending'}); } renderPendidikan();
-  } else if (v === 'kesehatan') { const payload = {pegawai: pegawaiIdx, penerima: val('fld_penerima'), diagnosa: val('fld_diagnosa'), rs: val('fld_rsfaskes'), catatan}; if(isEdit) { kesehatanData[editingEntryIdx] = {...kesehatanData[editingEntryIdx], ...payload, klaim: kesehatanData[editingEntryIdx].klaim}; } else { kesehatanData.push({...payload, klaim: 'Rp 0', status: 'pending'}); } renderKesehatan();
+  } else if (v === 'pendidikan') { const payload = {pegawai: pegawaiIdx, anak: `${val('fld_nama')} / ${val('fld_jenjang')}`, institusi: val('fld_institusi'), periode: val('fld_semestertahun'), tgl: today, catatan}; if(isEdit) { pendidikanData[editingEntryIdx] = {...pendidikanData[editingEntryIdx], ...payload, jumlah: pendidikanData[editingEntryIdx].jumlah}; } else { pendidikanData.push({...payload, jumlah: 'Rp 0', status: 'pending'}); } renderPendidikan();
+  } else if (v === 'kesehatan') { const payload = {pegawai: pegawaiIdx, penerima: val('fld_penerima'), diagnosa: val('fld_diagnosa'), rs: val('fld_rsfaskes'), tgl: today, catatan}; if(isEdit) { kesehatanData[editingEntryIdx] = {...kesehatanData[editingEntryIdx], ...payload, klaim: kesehatanData[editingEntryIdx].klaim}; } else { kesehatanData.push({...payload, klaim: 'Rp 0', status: 'pending'}); } renderKesehatan();
   } else if (v === 'musibah') { const payload = {pegawai: pegawaiIdx, jenis: val('fld_jenis'), tgl: today, bantuan: val('fld_estimasi'), catatan}; if(isEdit) { musibahData[editingEntryIdx] = {...musibahData[editingEntryIdx], ...payload}; } else { musibahData.push({...payload, status: 'pending'}); } renderMusibah();
-  } else { const payload = { pegawai: pegawaiIdx, jenis: v, catatan: catatan, jumlah: val('fld_jumlahnilai'), keterangan: val('fld_keterangan') }; if(isEdit) { const idx = customData.findIndex(c => c.jenis === editingEntryType && c.idx === editingEntryIdx); if(idx > -1) customData[idx] = {...customData[idx], ...payload}; } else { const newIdx = customData.filter(c => c.jenis === v).length; customData.push({...payload, idx: newIdx, status: 'pending'}); } showToast('Pengajuan dikirim', 'Pengajuan program kustom tersimpan'); }
+  } else { const payload = { pegawai: pegawaiIdx, jenis: v, tgl: today, catatan: catatan, jumlah: val('fld_jumlahnilai'), keterangan: val('fld_keterangan') }; if(isEdit) { const idx = customData.findIndex(c => c.jenis === editingEntryType && c.idx === editingEntryIdx); if(idx > -1) customData[idx] = {...customData[idx], ...payload}; } else { const newIdx = customData.filter(c => c.jenis === v).length; customData.push({...payload, idx: newIdx, status: 'pending'}); } showToast('Pengajuan dikirim', 'Pengajuan program kustom tersimpan'); }
   saveData();closeModal('modalPengajuan');
+
+  currentFilterYear = new Date().getFullYear();
+  populateYearFilter();
+  document.querySelectorAll('.year-label').forEach(el => el.textContent = currentFilterYear);
+  
   renderAll();
   if(!isEdit) {
     showToast('Pengajuan berhasil dikirim & disimpan','Data otomatis tersimpan ke perangkat ini');
@@ -2016,13 +2247,19 @@ function showToast(title,msg,type='ok'){document.getElementById('toastTitle').te
 const dropZone=document.getElementById('dropZone');
 if(dropZone){dropZone.addEventListener('dragover',(e)=>{e.preventDefault();dropZone.classList.add('dragover');});dropZone.addEventListener('dragleave',()=>{dropZone.classList.remove('dragover');});dropZone.addEventListener('drop',(e)=>{e.preventDefault();dropZone.classList.remove('dragover');const file=e.dataTransfer.files[0];if(file){document.getElementById('fileInput').files=e.dataTransfer.files;processExcelFile(file);}});}
 
-function renderAll() { renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan(); }
+function renderAll() { 
+  initCharts(); 
+  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();updateDashboardStats(); 
+}
 
 // ===== INIT =====
 setLocalData(defaultData);
+populateYearFilter();
+document.querySelectorAll('.year-label').forEach(el => el.textContent = currentFilterYear);
 renderLoginUsers();
 checkSession();
 renderAll();
+initCharts();
 
 (async () => {
   const loadingDb = document.getElementById('loadingDb');
@@ -2030,6 +2267,7 @@ renderAll();
   try { 
     await loadData(); 
     renderLoginUsers();
+    populateYearFilter();
     renderAll();
     initCharts();
   } catch(e) { 
