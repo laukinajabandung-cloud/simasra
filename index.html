@@ -254,10 +254,10 @@
 
     <section id="view-kasbon" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Outstanding</div><div class="text-xl font-display font-bold mt-1">Rp 487,3 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Aktif</div><div class="text-xl font-display font-bold mt-1">34 <span class="text-xs">orang</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Antrian Prioritas</div><div class="text-xl font-display font-bold mt-1" style="color:var(--danger)">3</div><div class="text-[10px] mt-0.5" style="color:var(--muted)">Pendidikan & Kesehatan</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Jatuh Tempo Bulan Ini</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">5</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Outstanding</div><div class="text-xl font-display font-bold mt-1" id="kasbonOutstanding">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Pengajuan</div><div class="text-xl font-display font-bold mt-1" id="kasbonTotalPengajuan">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Antrian Prioritas</div><div class="text-xl font-display font-bold mt-1" style="color:var(--danger)" id="kasbonPrioritas">0</div><div class="text-[10px] mt-0.5" style="color:var(--muted)">Pendidikan & Kesehatan</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pengajuan Pending</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="kasbonPending">0</div></div>
       </div>
       <div class="rounded-xl p-4 mb-4 flex items-center gap-3" style="border:1px solid rgba(248,113,113,0.3); background:linear-gradient(90deg, rgba(248,113,113,0.1), rgba(248,113,113,0.02))">
         <div class="icon-tile flex-shrink-0" style="background:rgba(248,113,113,0.2);color:#fca5a5"><i class="fa-solid fa-bolt"></i></div>
@@ -282,20 +282,20 @@
 
     <section id="view-softloan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Unit Disetujai</div><div class="text-xl font-display font-bold mt-1">142 <span class="text-xs">unit</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Nilai Outstanding</div><div class="text-xl font-display font-bold mt-1">Rp 684 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Menunggu Approval</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">1</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Cicilan</div><div class="text-xl font-display font-bold mt-1">Rp 1,2 Jt/bln</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Unit Diajukan</div><div class="text-xl font-display font-bold mt-1" id="softloanTotalUnit">0 <span class="text-xs">unit</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Nilai Total</div><div class="text-xl font-display font-bold mt-1" id="softloanTotalNilai">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Menunggu Approval</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="softloanPending">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Cicilan</div><div class="text-xl font-display font-bold mt-1" id="softloanAvgCicilan">Rp 0</div></div>
       </div>
       <div class="glass rounded-xl"><div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)"><h3 class="font-display font-semibold">Daftar Softloan Laptop</h3><button onclick="openModal('modalPengajuan')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Ajukan Softloan</button></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">Pegawai</th><th class="p-4">Tipe Laptop</th><th class="p-4">Nilai</th><th class="p-4">Tenor</th><th class="p-4">Cicilan/Bulan</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="softloanTable"></tbody></table></div></div>
     </section>
 
     <section id="view-sewarumah" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Disubsidi</div><div class="text-xl font-display font-bold mt-1">28 <span class="text-xs">orang</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Subsidi/Tahun</div><div class="text-xl font-display font-bold mt-1">Rp 1,2 M</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pengajuan Baru</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">2</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Subsidi</div><div class="text-xl font-display font-bold mt-1">Rp 3,6 Jt/bln</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Pengajuan</div><div class="text-xl font-display font-bold mt-1" id="sewarumahTotal">0 <span class="text-xs">entri</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Subsidi</div><div class="text-xl font-display font-bold mt-1" id="sewarumahTotalSubsidi">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pengajuan Baru</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="sewarumahPending">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Subsidi</div><div class="text-xl font-display font-bold mt-1" id="sewarumahAvgSubsidi">Rp 0</div></div>
       </div>
       <div class="rounded-xl p-4 mb-4 flex items-center gap-3" style="border:1px solid rgba(167,139,250,0.3); background:linear-gradient(90deg, rgba(167,139,250,0.1), rgba(167,139,250,0.02))">
         <div class="icon-tile flex-shrink-0" style="background:rgba(167,139,250,0.2);color:#c4b5fd"><i class="fa-solid fa-paperclip"></i></div>
@@ -306,10 +306,10 @@
 
     <section id="view-tabungan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Saldo Gabungan</div><div class="text-xl font-display font-bold mt-1">Rp 1,8 M</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Potongan Payroll/Bulan</div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent-2)">Rp 124,5 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Aktif Menabung</div><div class="text-xl font-display font-bold mt-1">212 <span class="text-xs">orang</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Penarikan Bulan Ini</div><div class="text-xl font-display font-bold mt-1">8 <span class="text-xs">kali</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Setoran <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)" id="tabunganSetoran">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Penarikan</div><div class="text-xl font-display font-bold mt-1" style="color:var(--danger)" id="tabunganPenarikan">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Jumlah Transaksi</div><div class="text-xl font-display font-bold mt-1" id="tabunganTotalTrx">0 <span class="text-xs">kali</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Menabung</div><div class="text-xl font-display font-bold mt-1" id="tabunganPegawai">0 <span class="text-xs">orang</span></div></div>
       </div>
       <div class="rounded-xl p-4 mb-4 flex items-center gap-3" style="border:1px solid rgba(251,191,36,0.3); background:linear-gradient(90deg, rgba(251,191,36,0.1), rgba(251,191,36,0.02))">
         <div class="icon-tile flex-shrink-0" style="background:rgba(251,191,36,0.2);color:#fcd34d"><i class="fa-solid fa-money-bill-transfer"></i></div>
@@ -318,7 +318,13 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
         <div class="lg:col-span-2 glass rounded-xl p-5">
           <div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold">Total Saldo Tabungan SDM</h3><p class="text-xs" style="color:var(--muted)">Gabungan seluruh pegawai</p></div><button onclick="openModal('modalPengajuan','tabungan')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Setor/Atur Tabungan</button></div>
-          <div class="text-4xl font-display font-bold mb-1" style="color:var(--accent)">Rp 1.842.350.000</div><div class="flex items-center gap-4 text-xs mt-3"><span class="flex items-center gap-1.5" style="color:var(--accent)"><i class="fa-solid fa-arrow-trend-up"></i> Naik 8,2% YoY</span><span style="color:var(--muted)">·</span><span style="color:var(--muted)">212 pegawai aktif menabung</span></div><div class="mt-5"><canvas id="chartTabungan" height="100"></canvas></div>
+          <div class="text-4xl font-display font-bold mb-1" style="color:var(--accent)" id="tabunganSaldoGabungan">Rp 0</div>
+          <div class="flex items-center gap-4 text-xs mt-3">
+            <span class="flex items-center gap-1.5" style="color:var(--accent)"><i class="fa-solid fa-arrow-trend-up"></i> Naik 8,2% YoY</span>
+            <span style="color:var(--muted)">·</span>
+            <span style="color:var(--muted)" id="tabunganPegawaiAktifInfo">0 pegawai aktif menabung</span>
+          </div>
+          <div class="mt-5"><canvas id="chartTabungan" height="100"></canvas></div>
         </div>
         <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-4">Top 5 Penabung</h3><div class="space-y-3" id="topSavers"></div></div>
       </div>
@@ -327,10 +333,10 @@
 
     <section id="view-infaq" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Terkumpul <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 145,5 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Disalurkan</div><div class="text-xl font-display font-bold mt-1">Rp 132,2 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Berinfaq</div><div class="text-xl font-display font-bold mt-1">156 <span class="text-xs">orang</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Saldo Infaq Saat Ini</div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)">Rp 13,3 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Terkumpul <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)" id="infaqTerkumpul">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Disalurkan</div><div class="text-xl font-display font-bold mt-1" style="color:var(--danger)" id="infaqDisalurkan">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Jumlah Transaksi</div><div class="text-xl font-display font-bold mt-1" id="infaqTotalTrx">0 <span class="text-xs">entri</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Saldo Infaq Tahun Berjalan</div><div class="text-xl font-display font-bold mt-1" id="infaqSaldo">Rp 0</div></div>
       </div>
       <div class="rounded-xl p-4 mb-4 flex items-center gap-3" style="border:1px solid rgba(52,211,153,0.3); background:linear-gradient(90deg, rgba(52,211,153,0.1), rgba(52,211,153,0.02))">
         <div class="icon-tile flex-shrink-0" style="background:rgba(52,211,153,0.2);color:#6ee7b7"><i class="fa-solid fa-hand-holding-heart"></i></div>
@@ -341,30 +347,30 @@
 
     <section id="view-pendidikan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 234 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Anak Pegawai Dibantu</div><div class="text-xl font-display font-bold mt-1">67 <span class="text-xs">anak</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pengajuan Pending</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">3</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Budget Tersisa</div><div class="text-xl font-display font-bold mt-1">Rp 166 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" id="pendidikanTotal">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Anak Pegawai Dibantu</div><div class="text-xl font-display font-bold mt-1" id="pendidikanAnak">0 <span class="text-xs">anak</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pengajuan Pending</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="pendidikanPending">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Pengajuan</div><div class="text-xl font-display font-bold mt-1" id="pendidikanTotalTrx">0 <span class="text-xs">entri</span></div></div>
       </div>
       <div class="glass rounded-xl"><div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)"><h3 class="font-display font-semibold">Daftar Bantuan Pendidikan</h3><button onclick="openModal('modalPengajuan')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Ajukan Bantuan</button></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">Pegawai</th><th class="p-4">Anak (Nama / Jenjang)</th><th class="p-4">Institusi</th><th class="p-4">Jumlah Bantuan</th><th class="p-4">Periode</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="pendidikanTable"></tbody></table></div></div>
     </section>
 
     <section id="view-kesehatan" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Klaim <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 156 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Klaim Approved</div><div class="text-xl font-display font-bold mt-1">48 <span class="text-xs">kasus</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pending Approval</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">1</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Klaim</div><div class="text-xl font-display font-bold mt-1">Rp 3,2 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Klaim <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" id="kesehatanTotalKlaim">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Klaim Approved</div><div class="text-xl font-display font-bold mt-1" id="kesehatanApproved">0 <span class="text-xs">kasus</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pending Approval</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="kesehatanPending">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Rata-rata Klaim</div><div class="text-xl font-display font-bold mt-1" id="kesehatanAvgKlaim">Rp 0</div></div>
       </div>
       <div class="glass rounded-xl"><div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)"><h3 class="font-display font-semibold">Daftar Bantuan Kesehatan</h3><button onclick="openModal('modalPengajuan')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Ajukan Klaim</button></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">Pegawai</th><th class="p-4">Penerima Manfaat</th><th class="p-4">Diagnosa</th><th class="p-4">Rs/Faskes</th><th class="p-4">Klaim</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="kesehatanTable"></tbody></table></div></div>
     </section>
 
     <section id="view-musibah" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1">Rp 122,5 Jt</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Kasus Selesai</div><div class="text-xl font-display font-bold mt-1">14 <span class="text-xs">kasus</span></div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Sedang Diproses</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)">2</div></div>
-        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Dana Darurat Tersedia</div><div class="text-xl font-display font-bold mt-1">Rp 250 Jt</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Disalurkan <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" id="musibahTotal">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Kasus Selesai</div><div class="text-xl font-display font-bold mt-1" id="musibahSelesai">0 <span class="text-xs">kasus</span></div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Sedang Diproses</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="musibahProses">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Kasus</div><div class="text-xl font-display font-bold mt-1" id="musibahTotalKasus">0 <span class="text-xs">kasus</span></div></div>
       </div>
       <div class="glass rounded-xl"><div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)"><h3 class="font-display font-semibold">Daftar Bantuan Musibah</h3><button onclick="openModal('modalPengajuan')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Ajukan Bantuan</button></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">Pegawai</th><th class="p-4">Jenis Musibah</th><th class="p-4">Tanggal Kejadian</th><th class="p-4">Bantuan Diberikan</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="musibahTable"></tbody></table></div></div>
     </section>
@@ -1834,14 +1840,61 @@ function filterTabungan(cat, btn) { tabunganFilter = cat; document.querySelector
 function renderTabungan(){
   let filtered = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear); 
   if(tabunganFilter !== 'all') { filtered = filtered.filter(t => t.kategori === tabunganFilter); }
-  if(filtered.length === 0) { document.getElementById('tabunganTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; return; }
-  document.getElementById('tabunganTable').innerHTML = filtered.map(t => { 
-    const idx = tabunganData.indexOf(t);
-    const isSetoran = t.jenis === 'Setoran'; const cat = tabunganKategoriMap[t.kategori] || tabunganKategoriMap.lainnya; 
-    return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4 text-sm">${t.tgl}</td><td class="p-4 text-sm font-semibold">${pegawai[t.pegawai]?.nama || 'N/A'}</td><td class="p-4"><span class="badge" style="background:${cat.bg};color:${cat.color};border:1px solid ${cat.color}40;text-transform:capitalize;"><i class="fa-solid ${cat.icon}"></i> ${cat.label}</span></td><td class="p-4"><span class="badge ${isSetoran ? 'badge-approved' : 'badge-active'}">${isSetoran ? '<i class="fa-solid fa-arrow-down"></i> Setoran' : '<i class="fa-solid fa-arrow-up"></i> Penarikan'}</span></td><td class="p-4 font-semibold" style="color:${isSetoran ? 'var(--accent)' : 'var(--danger)'}">${t.jumlah}</td><td class="p-4 font-semibold">${t.saldo}</td><td class="p-4">${actionBtns('tabungan', idx)}</td></tr>`; 
-  }).join('');
-  const savers = [{idx:2, saldo:'Rp 23,0 Jt', kategori:'umrah'},{idx:5, saldo:'Rp 19,8 Jt', kategori:'pendidikan'},{idx:1, saldo:'Rp 18,2 Jt', kategori:'lainnya'},{idx:4, saldo:'Rp 15,2 Jt', kategori:'qurban'},{idx:0, saldo:'Rp 12,5 Jt', kategori:'hariraya'}];
-  document.getElementById('topSavers').innerHTML = savers.map((s,i) => { const cat = tabunganKategoriMap[s.kategori]; return `<div class="flex items-center gap-3"><div class="text-sm font-bold w-5" style="color:var(--muted)">${i+1}</div>${avatar(s.idx, 32)}<div class="ml-auto text-right"><div class="text-sm font-semibold" style="color:var(--accent)">${s.saldo}</div><div class="text-[10px] flex items-center justify-end gap-1" style="color:var(--muted)"><i class="fa-solid ${cat.icon}" style="color:${cat.color}"></i> ${cat.label}</div></div></div>`; }).join('');
+  if(filtered.length === 0) { document.getElementById('tabunganTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Tidak ada data untuk tahun ${currentFilterYear}</td></tr>`; } 
+  else {
+    document.getElementById('tabunganTable').innerHTML = filtered.map(t => { 
+      const idx = tabunganData.indexOf(t);
+      const isSetoran = t.jenis === 'Setoran'; const cat = tabunganKategoriMap[t.kategori] || tabunganKategoriMap.lainnya; 
+      return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4 text-sm">${t.tgl}</td><td class="p-4 text-sm font-semibold">${pegawai[t.pegawai]?.nama || 'N/A'}</td><td class="p-4"><span class="badge" style="background:${cat.bg};color:${cat.color};border:1px solid ${cat.color}40;text-transform:capitalize;"><i class="fa-solid ${cat.icon}"></i> ${cat.label}</span></td><td class="p-4"><span class="badge ${isSetoran ? 'badge-approved' : 'badge-active'}">${isSetoran ? '<i class="fa-solid fa-arrow-down"></i> Setoran' : '<i class="fa-solid fa-arrow-up"></i> Penarikan'}</span></td><td class="p-4 font-semibold" style="color:${isSetoran ? 'var(--accent)' : 'var(--danger)'}">${t.jumlah}</td><td class="p-4 font-semibold">${t.saldo}</td><td class="p-4">${actionBtns('tabungan', idx)}</td></tr>`; 
+    }).join('');
+  }
+
+  // Calculate cumulative balances up to the selected year
+  const allRelevantTab = tabunganData.filter(t => getYearFromDate(t.tgl) <= currentFilterYear);
+  let totalSaldoGabungan = 0;
+  const pegawaiSaldo = {};
+  let activeSaversCount = 0;
+
+  allRelevantTab.forEach(t => {
+    const val = Math.abs(parseRupiah(t.jumlah));
+    if (t.jenis === 'Setoran') {
+      totalSaldoGabungan += val;
+      if (!pegawaiSaldo[t.pegawai]) pegawaiSaldo[t.pegawai] = 0;
+      pegawaiSaldo[t.pegawai] += val;
+    } else {
+      totalSaldoGabungan -= val;
+      if (!pegawaiSaldo[t.pegawai]) pegawaiSaldo[t.pegawai] = 0;
+      pegawaiSaldo[t.pegawai] -= val;
+    }
+  });
+
+  activeSaversCount = Object.keys(pegawaiSaldo).length;
+
+  const elSaldo = document.getElementById('tabunganSaldoGabungan');
+  if (elSaldo) elSaldo.textContent = formatRupiah(totalSaldoGabungan);
+
+  const elPegawai = document.getElementById('tabunganPegawaiAktifInfo');
+  if (elPegawai) elPegawai.textContent = `${activeSaversCount} pegawai aktif menabung`;
+
+  // Top 5 Savers
+  const sortedSavers = Object.entries(pegawaiSaldo)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([idx, saldo]) => ({ idx: parseInt(idx), saldo }));
+
+  const saversHtml = sortedSavers.map((s, i) => `
+    <div class="flex items-center gap-3">
+      <div class="text-sm font-bold w-5" style="color:var(--muted)">${i+1}</div>
+      ${avatar(s.idx, 32)}
+      <div class="ml-auto text-right">
+        <div class="text-sm font-semibold" style="color:var(--accent)">${formatShortRupiah(s.saldo)}</div>
+        <div class="text-[10px] flex items-center justify-end gap-1" style="color:var(--muted)">${pegawai[s.idx]?.nama || 'N/A'}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const topSaversEl = document.getElementById('topSavers');
+  if(topSaversEl) topSaversEl.innerHTML = saversHtml || `<div class="text-xs text-center py-4" style="color:var(--muted)">Belum ada penabung</div>`;
 }
 
 function filterInfaq(cat, btn) { infaqFilter = cat; document.querySelectorAll('#view-infaq .tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderInfaq(); }
@@ -2013,6 +2066,89 @@ function renderApprovalRate(){
     </div>`;
   });
   document.getElementById('approvalRate').innerHTML = html;
+}
+
+function updateAllStatCards() {
+  const setText = (id, text) => { const el = document.getElementById(id); if(el) el.innerHTML = text; };
+
+  // Kasbon
+  const yKasbon = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear);
+  const kOutstanding = yKasbon.reduce((s, k) => s + parseRupiah(k.sisa), 0);
+  const kPrioritas = yKasbon.filter(k => k.status === 'pending' && (k.kategori === 'pendidikan' || k.kategori === 'kesehatan')).length;
+  const kPending = yKasbon.filter(k => k.status === 'pending').length;
+  setText('kasbonOutstanding', formatShortRupiah(kOutstanding));
+  setText('kasbonTotalPengajuan', yKasbon.length + ' <span class="text-xs">entri</span>');
+  setText('kasbonPrioritas', kPrioritas);
+  setText('kasbonPending', kPending);
+
+  // Softloan
+  const ySoftloan = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear);
+  const sNilai = ySoftloan.reduce((s, d) => s + parseRupiah(d.nilai), 0);
+  const sPending = ySoftloan.filter(d => d.status === 'pending').length;
+  const sCicilan = ySoftloan.length > 0 ? ySoftloan.reduce((s, d) => s + parseRupiah(d.cicilan), 0) / ySoftloan.length : 0;
+  setText('softloanTotalUnit', ySoftloan.length + ' <span class="text-xs">unit</span>');
+  setText('softloanTotalNilai', formatShortRupiah(sNilai));
+  setText('softloanPending', sPending);
+  setText('softloanAvgCicilan', formatShortRupiah(sCicilan));
+
+  // Sewa Rumah
+  const ySewa = sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear);
+  const swSubsidi = ySewa.reduce((s, d) => s + parseRupiah(d.subsidi), 0);
+  const swPending = ySewa.filter(d => d.status === 'pending').length;
+  const swAvgSubsidi = ySewa.length > 0 ? swSubsidi / ySewa.length : 0;
+  setText('sewarumahTotal', ySewa.length + ' <span class="text-xs">entri</span>');
+  setText('sewarumahTotalSubsidi', formatShortRupiah(swSubsidi));
+  setText('sewarumahPending', swPending);
+  setText('sewarumahAvgSubsidi', formatShortRupiah(swAvgSubsidi));
+
+  // Tabungan Stats
+  const yTab = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear);
+  const tSetoran = yTab.filter(t => t.jenis === 'Setoran').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
+  const tPenarikan = yTab.filter(t => t.jenis === 'Penarikan').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
+  const tPegawai = new Set(yTab.map(t => t.pegawai)).size;
+  setText('tabunganSetoran', formatShortRupiah(tSetoran));
+  setText('tabunganPenarikan', formatShortRupiah(tPenarikan));
+  setText('tabunganTotalTrx', yTab.length + ' <span class="text-xs">kali</span>');
+  setText('tabunganPegawai', tPegawai + ' <span class="text-xs">orang</span>');
+
+  // Infaq
+  const yInfaq = infaqData.filter(i => getYearFromDate(i.tgl) === currentFilterYear);
+  const iTerkumpul = yInfaq.filter(i => i.jenis === 'Setoran').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
+  const iDisalurkan = yInfaq.filter(i => i.jenis === 'Penyaluran').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
+  setText('infaqTerkumpul', formatShortRupiah(iTerkumpul));
+  setText('infaqDisalurkan', formatShortRupiah(iDisalurkan));
+  setText('infaqTotalTrx', yInfaq.length + ' <span class="text-xs">entri</span>');
+  setText('infaqSaldo', formatShortRupiah(iTerkumpul - iDisalurkan));
+
+  // Pendidikan
+  const yPend = pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear);
+  const pTotal = yPend.reduce((s, d) => s + parseRupiah(d.jumlah), 0);
+  const pPending = yPend.filter(d => d.status === 'pending').length;
+  setText('pendidikanTotal', formatShortRupiah(pTotal));
+  setText('pendidikanAnak', yPend.length + ' <span class="text-xs">anak</span>');
+  setText('pendidikanPending', pPending);
+  setText('pendidikanTotalTrx', yPend.length + ' <span class="text-xs">entri</span>');
+
+  // Kesehatan
+  const yKes = kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear);
+  const kTotalKlaim = yKes.reduce((s, d) => s + parseRupiah(d.klaim), 0);
+  const kApproved = yKes.filter(d => d.status === 'approved' || d.status === 'active').length;
+  const kPendingKlaim = yKes.filter(d => d.status === 'pending').length;
+  const kAvgKlaim = yKes.length > 0 ? kTotalKlaim / yKes.length : 0;
+  setText('kesehatanTotalKlaim', formatShortRupiah(kTotalKlaim));
+  setText('kesehatanApproved', kApproved + ' <span class="text-xs">kasus</span>');
+  setText('kesehatanPending', kPendingKlaim);
+  setText('kesehatanAvgKlaim', formatShortRupiah(kAvgKlaim));
+
+  // Musibah
+  const yMus = musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear);
+  const mTotal = yMus.reduce((s, d) => s + parseRupiah(d.bantuan), 0);
+  const mSelesai = yMus.filter(d => d.status === 'completed').length;
+  const mProses = yMus.filter(d => d.status === 'active' || d.status === 'pending').length;
+  setText('musibahTotal', formatShortRupiah(mTotal));
+  setText('musibahSelesai', mSelesai + ' <span class="text-xs">kasus</span>');
+  setText('musibahProses', mProses);
+  setText('musibahTotalKasus', yMus.length + ' <span class="text-xs">kasus</span>');
 }
 
 function updateDashboardStats() {
@@ -2249,7 +2385,7 @@ if(dropZone){dropZone.addEventListener('dragover',(e)=>{e.preventDefault();dropZ
 
 function renderAll() { 
   initCharts(); 
-  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();updateDashboardStats(); 
+  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();updateDashboardStats();updateAllStatCards(); 
 }
 
 // ===== INIT =====
