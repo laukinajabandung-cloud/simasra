@@ -450,22 +450,46 @@
       </div>
     </section>
 
-    <section id="view-pegawai" class="view">
+        <section id="view-pegawai" class="view">
       <div class="glass rounded-xl">
         <div class="flex flex-wrap items-center justify-between gap-3 p-5 border-b" style="border-color:var(--border)">
           <div class="flex items-center gap-3"><h3 class="font-display font-semibold">Data Pegawai</h3><span class="badge badge-approved" id="pegawaiCount">8 Total</span></div>
           <div class="flex flex-wrap items-center gap-2">
-            <input type="text" id="pegawaiSearch" placeholder="Cari pegawai..." class="px-3 py-2 rounded-lg text-xs w-48" oninput="filterPegawai()">
-            <button class="btn-ghost px-3 py-2 rounded-lg text-xs flex items-center gap-2"><i class="fa-solid fa-filter"></i> Filter</button>
             <button onclick="downloadTemplateExcel()" class="btn-outline px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-file-arrow-down"></i> Unduh Template</button>
             <button onclick="openImportModal()" class="btn-ghost px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only" style="color:var(--accent-3);border-color:rgba(34,211,238,0.3)"><i class="fa-solid fa-file-arrow-up"></i> Import Excel</button>
             <button onclick="openModal('modalPegawai')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Tambah Pegawai</button>
           </div>
         </div>
+
+        <div class="flex flex-wrap items-center gap-3 p-4 border-b" style="border-color:var(--border)">
+          <input type="text" id="pegawaiSearch" placeholder="Cari nama/NIP..." class="px-3 py-2 rounded-lg text-xs w-48" oninput="filterPegawai()">
+          <select id="pegawaiBidangFilter" onchange="filterPegawai()" class="px-3 py-2 rounded-lg text-xs">
+            <option value="all">Semua Bidang</option>
+          </select>
+          <select id="pegawaiDeptFilter" onchange="filterPegawai()" class="px-3 py-2 rounded-lg text-xs">
+            <option value="all">Semua Departemen</option>
+          </select>
+          <div class="ml-auto flex items-center gap-2">
+            <select id="pegawaiLimit" onchange="filterPegawai()" class="px-3 py-2 rounded-lg text-xs">
+              <option value="10">10 entri</option>
+              <option value="25">25 entri</option>
+              <option value="50">50 entri</option>
+              <option value="9999">Semua</option>
+            </select>
+            <div class="flex gap-1">
+              <button id="pegPrev" onclick="changePegPage(-1)" class="btn-ghost w-8 h-8 rounded-lg flex items-center justify-center" title="Sebelumnya"><i class="fa-solid fa-angle-left text-xs"></i></button>
+              <button id="pegNext" onclick="changePegPage(1)" class="btn-ghost w-8 h-8 rounded-lg flex items-center justify-center" title="Berikutnya"><i class="fa-solid fa-angle-right text-xs"></i></button>
+            </div>
+          </div>
+        </div>
+
         <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">NIP</th><th class="p-4">Nama</th><th class="p-4">Bidang</th><th class="p-4">Departemen</th><th class="p-4">Jabatan</th><th class="p-4">Usia</th><th class="p-4">Masa Kerja</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="pegawaiTable"></tbody></table></div>
+        
+        <div class="p-4 border-t text-xs flex justify-between items-center" style="border-color:var(--border);color:var(--muted)">
+          <span id="pegPageInfo">Menampilkan 0 dari 0 data</span>
+        </div>
       </div>
     </section>
-
     <section id="view-program" class="view">
       <div class="glass rounded-xl">
         <div class="flex flex-wrap items-center justify-between gap-3 p-5 border-b" style="border-color:var(--border)">
@@ -836,6 +860,7 @@ async function resetSystem() {
 let pegawai = [], programs = [], timPersetujuan = [], kasbonData = [], tabunganData = [], infaqData = [], sewarumahData = [], softloanData = [], pendidikanData = [], kesehatanData = [], musibahData = [], pensiunData = [], customData = [], importedData = [], akunKeuangan = [], keuanganData = [];
 let pegawaiFilterText = '', kasbonFilter = 'all', tabunganFilter = 'all', infaqFilter = 'all';
 let approvalFilterType = 'all', approvalFilterDept = 'all', approvalSearchText = '';
+let pegawaiFilterBidang = 'all', pegawaiFilterDept = 'all', pegawaiCurrentPage = 1, pegawaiLimit = 10;
 let editingPegawaiIdx = -1, deletingPegawaiIdx = -1, editingTimIdx = -1, deletingTimIdx = -1, editingUserIdx = -1, deletingUserIdx = -1, editingProgramIdx = -1, deletingProgramIdx = -1, editingEntryType = null, editingEntryIdx = -1, deletingEntryType = null, deletingEntryIdx = -1, editingKeuanganIdx = -1, deletingKeuanganIdx = -1, editingAkunIdx = -1, deletingAkunIdx = -1;
 let currentViewPegawaiIdx = -1;
 let currentFilterYear = new Date().getFullYear();
@@ -1955,7 +1980,21 @@ function applyYearFilter(year) {
   renderAll();
 }
 
-function filterPegawai(){pegawaiFilterText=document.getElementById('pegawaiSearch').value.toLowerCase();renderPegawai();}
+function filterPegawai(){
+  pegawaiFilterText = document.getElementById('pegawaiSearch').value.toLowerCase();
+  pegawaiFilterBidang = document.getElementById('pegawaiBidangFilter').value;
+  pegawaiFilterDept = document.getElementById('pegawaiDeptFilter').value;
+  pegawaiLimit = parseInt(document.getElementById('pegawaiLimit').value) || 10;
+  pegawaiCurrentPage = 1; // Reset ke halaman 1 saat filter diubah
+  renderPegawai();
+}
+
+function changePegPage(dir) {
+  pegawaiCurrentPage += dir;
+  if(pegawaiCurrentPage < 1) pegawaiCurrentPage = 1;
+  renderPegawai();
+}
+
 function filterKasbon(cat, btn) { kasbonFilter = cat; document.querySelectorAll('#view-kasbon .tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderKasbon(); }
 function renderKasbon(){
   let filtered = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear); 
@@ -2141,23 +2180,71 @@ function renderPensiun(){
 }
 
 function renderPegawai(){
-  const filtered = pegawai.filter(p => !pegawaiFilterText || p.nama.toLowerCase().includes(pegawaiFilterText) || p.nip.toLowerCase().includes(pegawaiFilterText) || p.dept.toLowerCase().includes(pegawaiFilterText) || (p.bidang && p.bidang.toLowerCase().includes(pegawaiFilterText)));
-  document.getElementById('pegawaiTable').innerHTML = filtered.map(p => {
-    const originalIdx = pegawai.indexOf(p);
-    const usia = calculateAge(p.tglLahir);
-    return `<tr class="table-row border-t" style="border-color:var(--border)">
-      <td class="p-4 text-sm font-mono" style="color:var(--muted)">${p.nip}</td>
-      <td class="p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs" style="background:linear-gradient(135deg,${p.color},#22d3ee);color:#04231b">${initials(p.nama)}</div><div class="font-semibold text-sm">${p.nama}</div></div></td>
-      <td class="p-4 text-sm">${p.bidang || '-'}</td>
-      <td class="p-4 text-sm">${p.dept}</td>
-      <td class="p-4 text-sm">${p.jabatan}</td>
-      <td class="p-4 text-sm">${usia !== null ? usia + ' Thn' : '-'}</td>
-      <td class="p-4 text-sm">${calculateMasaKerja(p.tglMulai)}</td>
-      <td class="p-4">${usia >= 58 ? '<span class="badge badge-pending">Pensiun</span>' : badgeHtml('active')}</td>
-      <td class="p-4">${pegawaiActionBtns(originalIdx)}</td>
-    </tr>`;
-  }).join('');
+  // 1. Isi dropdown filter Bidang & Departemen secara dinamis
+  const bidangSelect = document.getElementById('pegawaiBidangFilter');
+  const deptSelect = document.getElementById('pegawaiDeptFilter');
+  if(bidangSelect && deptSelect) {
+    const bidangs = [...new Set(pegawai.map(p => p.bidang).filter(b => b))].sort();
+    const depts = [...new Set(pegawai.map(p => p.dept).filter(d => d))].sort();
+    
+    const currentBidang = bidangSelect.value;
+    const currentDept = deptSelect.value;
+    
+    bidangSelect.innerHTML = `<option value="all">Semua Bidang</option>` + bidangs.map(b => `<option value="${b}">${b}</option>`).join('');
+    deptSelect.innerHTML = `<option value="all">Semua Departemen</option>` + depts.map(d => `<option value="${d}">${d}</option>`).join('');
+    
+    bidangSelect.value = currentBidang || 'all';
+    deptSelect.value = currentDept || 'all';
+  }
+
+  // 2. Terapkan Filter
+  const filtered = pegawai.filter(p => {
+    if (pegawaiFilterText && !p.nama.toLowerCase().includes(pegawaiFilterText) && !p.nip.toLowerCase().includes(pegawaiFilterText)) return false;
+    if (pegawaiFilterBidang !== 'all' && p.bidang !== pegawaiFilterBidang) return false;
+    if (pegawaiFilterDept !== 'all' && p.dept !== pegawaiFilterDept) return false;
+    return true;
+  });
+  
   document.getElementById('pegawaiCount').textContent = pegawai.length + ' Total';
+  
+  // 3. Logika Pagination
+  const totalFiltered = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / pegawaiLimit));
+  if(pegawaiCurrentPage > totalPages) pegawaiCurrentPage = totalPages;
+  
+  const startIdx = (pegawaiCurrentPage - 1) * pegawaiLimit;
+  const endIdx = startIdx + pegawaiLimit;
+  const paginated = filtered.slice(startIdx, endIdx);
+  
+  // 4. Render Tabel
+  if(paginated.length === 0) {
+    document.getElementById('pegawaiTable').innerHTML = `<tr><td colspan="9" class="p-8 text-center text-sm" style="color:var(--muted)">Data pegawai tidak ditemukan.</td></tr>`;
+  } else {
+    document.getElementById('pegawaiTable').innerHTML = paginated.map(p => {
+      const originalIdx = pegawai.indexOf(p);
+      const usia = calculateAge(p.tglLahir);
+      return `<tr class="table-row border-t" style="border-color:var(--border)">
+        <td class="p-4 text-sm font-mono" style="color:var(--muted)">${p.nip}</td>
+        <td class="p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs" style="background:linear-gradient(135deg,${p.color},#22d3ee);color:#04231b">${initials(p.nama)}</div><div class="font-semibold text-sm">${p.nama}</div></div></td>
+        <td class="p-4 text-sm">${p.bidang || '-'}</td>
+        <td class="p-4 text-sm">${p.dept}</td>
+        <td class="p-4 text-sm">${p.jabatan}</td>
+        <td class="p-4 text-sm">${usia !== null ? usia + ' Thn' : '-'}</td>
+        <td class="p-4 text-sm">${calculateMasaKerja(p.tglMulai)}</td>
+        <td class="p-4">${usia >= 58 ? '<span class="badge badge-pending">Pensiun</span>' : badgeHtml('active')}</td>
+        <td class="p-4">${pegawaiActionBtns(originalIdx)}</td>
+      </tr>`;
+    }).join('');
+  }
+  
+  // 5. Update Info Halaman & Tombol Prev/Next
+  const infoEl = document.getElementById('pegPageInfo');
+  const prevBtn = document.getElementById('pegPrev');
+  const nextBtn = document.getElementById('pegNext');
+  
+  if(infoEl) infoEl.textContent = `Menampilkan ${paginated.length} dari ${totalFiltered} data`;
+  if(prevBtn) prevBtn.style.opacity = pegawaiCurrentPage === 1 ? '0.5' : '1';
+  if(nextBtn) nextBtn.style.opacity = (pegawaiCurrentPage === totalPages || totalFiltered === 0) ? '0.5' : '1';
 }
 
 function renderApprovalFilters() {
