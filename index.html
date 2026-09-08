@@ -142,7 +142,7 @@
     <button id="resetBtn" onclick="resetSystem()" class="hidden mt-4 w-full px-4 py-2 rounded-lg text-xs flex items-center justify-center gap-2" style="color:var(--danger); border:1px solid rgba(248,113,113,0.3);">
       <i class="fa-solid fa-triangle-exclamation"></i> Reset Sistem & Pengguna
     </button>
-    <div class="mt-6 pt-4 border-t text-center" style="border-color:var(--border)"><p class="text-[10px]" style="color:var(--muted)">© 2024 SIMASRA. All rights reserved.</p></div>
+    <div class="mt-6 pt-4 border-t text-center" style="border-color:var(--border)"><p class="text-[10px]" style="color:var(--muted)">© 2026 SIMASRA. All rights reserved.</p></div>
   </div>
 </div>
 
@@ -376,6 +376,20 @@
     </section>
 
     <section id="view-keuangan" class="view">
+      <div class="glass rounded-xl p-4 mb-4 flex flex-wrap items-center justify-between gap-3">
+  <div>
+    <h3 class="font-display font-semibold">Laporan Keuangan Tahun <span class="year-label">2024</span></h3>
+    <p class="text-xs" style="color:var(--muted)">Ekspor atau cetak laporan arus kas</p>
+  </div>
+  <div class="flex gap-2">
+    <button onclick="downloadLaporanKeuangan()" class="btn-outline px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+      <i class="fa-solid fa-file-excel"></i> Unduh Excel
+    </button>
+    <button onclick="printLaporanKeuangan()" class="btn-primary px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+      <i class="fa-solid fa-print"></i> Cetak Laporan
+    </button>
+  </div>
+</div>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Saldo Awal</div><div class="text-xl font-display font-bold mt-1" id="keuTotalSaldoAwal">Rp 0</div></div>
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Pemasukan</div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)" id="keuTotalPemasukan">Rp 0</div></div>
@@ -425,11 +439,59 @@
     </section>
 
     <section id="view-laporan" class="view">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Realisasi per Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Tahun <span class="year-label">2024</span> · dalam jutaan rupiah</p><canvas id="chartBar" height="160"></canvas></div>
-        <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Tingkat Pencairan</h3><p class="text-xs mb-4" style="color:var(--muted)">Rasio pengajuan vs disetujui</p><div class="space-y-3" id="approvalRate"></div></div>
-      </div>
-    </section>
+  <!-- Header dengan tombol Unduh & Cetak -->
+  <div class="glass rounded-xl p-5 mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h3 class="font-display font-semibold text-lg">Laporan Program Kesejahteraan</h3>
+      <p class="text-xs" style="color:var(--muted)">Rekap & analisis realisasi program tahun <span class="year-label">2024</span></p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <select id="laporanProgramSelect" class="px-3 py-2 rounded-lg text-xs" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--fg)">
+        <option value="semua">Semua Program</option>
+        <option value="kasbon">Kasbon</option>
+        <option value="softloan">Softloan Laptop</option>
+        <option value="sewarumah">Sewa Rumah</option>
+        <option value="tabungan">Tabungan SDM</option>
+        <option value="infaq">Infaq SDM</option>
+        <option value="pendidikan">Bantuan Pendidikan</option>
+        <option value="kesehatan">Bantuan Kesehatan</option>
+        <option value="musibah">Bantuan Musibah</option>
+      </select>
+      <button onclick="downloadReport(document.getElementById('laporanProgramSelect').value)" class="btn-outline px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+        <i class="fa-solid fa-file-excel"></i> Unduh Excel
+      </button>
+      <button onclick="printReport(document.getElementById('laporanProgramSelect').value)" class="btn-primary px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+        <i class="fa-solid fa-print"></i> Cetak Laporan
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Realisasi per Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Tahun <span class="year-label">2024</span> · dalam jutaan rupiah</p><canvas id="chartBar" height="160"></canvas></div>
+    <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Tingkat Pencairan</h3><p class="text-xs mb-4" style="color:var(--muted)">Rasio pengajuan vs disetujui</p><div class="space-y-3" id="approvalRate"></div></div>
+  </div>
+
+  <!-- Ringkasan Realisasi -->
+  <div class="glass rounded-xl p-5">
+    <h3 class="font-display font-semibold mb-4">Ringkasan Realisasi Tahun <span class="year-label">2024</span></h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" id="ringkasanTable">
+        <thead>
+          <tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)">
+            <th class="p-3">No</th>
+            <th class="p-3">Program</th>
+            <th class="p-3">Total Pengajuan</th>
+            <th class="p-3">Disetujui</th>
+            <th class="p-3">Pending</th>
+            <th class="p-3">Total Nilai</th>
+            <th class="p-3">% Pencairan</th>
+          </tr>
+        </thead>
+        <tbody id="ringkasanBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
     <section id="view-pengaturan" class="view">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -2386,6 +2448,411 @@ if(dropZone){dropZone.addEventListener('dragover',(e)=>{e.preventDefault();dropZ
 function renderAll() { 
   initCharts(); 
   renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();updateDashboardStats();updateAllStatCards(); 
+}
+
+// ===== REPORT FUNCTIONS (Unduh & Cetak) =====
+function getReportData(type) {
+  const year = currentFilterYear;
+  let rows = [], title = '', progLabel = '';
+
+  if (type === 'kasbon' || type === 'semua') {
+    const filtered = (type === 'semua' ? kasbonData : kasbonData).filter(k => getYearFromDate(k.tgl) === year);
+    filtered.forEach(k => {
+      rows.push({
+        'Program': 'Kasbon',
+        'Pegawai': pegawai[k.pegawai]?.nama || '-',
+        'NIP': pegawai[k.pegawai]?.nip || '-',
+        'Departemen': pegawai[k.pegawai]?.dept || '-',
+        'Kategori': capitalize(k.kategori),
+        'Tanggal': k.tgl,
+        'Nilai/Pokok': k.pokok,
+        'Tenor': k.tenor,
+        'Sisa': k.sisa,
+        'Progress': (k.progress || 0) + '%',
+        'Status': k.status
+      });
+    });
+    if (type === 'kasbon') { title = 'Laporan Kasbon'; progLabel = 'Kasbon'; }
+  }
+
+  if (type === 'softloan' || type === 'semua') {
+    softloanData.filter(s => getYearFromDate(s.tgl) === year).forEach(s => {
+      rows.push({
+        'Program': 'Softloan Laptop',
+        'Pegawai': pegawai[s.pegawai]?.nama || '-',
+        'NIP': pegawai[s.pegawai]?.nip || '-',
+        'Departemen': pegawai[s.pegawai]?.dept || '-',
+        'Tipe Laptop': s.laptop,
+        'Tanggal': s.tgl,
+        'Nilai': s.nilai,
+        'Tenor': s.tenor,
+        'Cicilan/Bulan': s.cicilan,
+        'Status': s.status
+      });
+    });
+    if (type === 'softloan') { title = 'Laporan Softloan Laptop'; progLabel = 'Softloan Laptop'; }
+  }
+
+  if (type === 'sewarumah' || type === 'semua') {
+    sewarumahData.filter(s => getYearFromDate(s.tgl) === year).forEach(s => {
+      rows.push({
+        'Program': 'Sewa Rumah',
+        'Pegawai': pegawai[s.pegawai]?.nama || '-',
+        'NIP': pegawai[s.pegawai]?.nip || '-',
+        'Lokasi': s.lokasi,
+        'Tanggal': s.tgl,
+        'Sewa/Bulan': s.sewa,
+        'Subsidi': s.subsidi,
+        'Periode': s.periode,
+        'Dokumen KTP': s.docs?.ktp ? 'Lengkap' : 'Belum',
+        'Photo Rumah': s.docs?.photo ? 'Lengkap' : 'Belum',
+        'Kwitansi': s.docs?.kwitansi ? 'Lengkap' : 'Belum',
+        'Status': s.status
+      });
+    });
+    if (type === 'sewarumah') { title = 'Laporan Sewa Rumah'; progLabel = 'Sewa Rumah'; }
+  }
+
+  if (type === 'tabungan' || type === 'semua') {
+    tabunganData.filter(t => getYearFromDate(t.tgl) === year).forEach(t => {
+      rows.push({
+        'Program': 'Tabungan SDM',
+        'Tanggal': t.tgl,
+        'Pegawai': pegawai[t.pegawai]?.nama || '-',
+        'NIP': pegawai[t.pegawai]?.nip || '-',
+        'Kategori': capitalize(t.kategori),
+        'Jenis Transaksi': t.jenis,
+        'Jumlah': t.jumlah,
+        'Saldo Setelah': t.saldo
+      });
+    });
+    if (type === 'tabungan') { title = 'Laporan Tabungan SDM'; progLabel = 'Tabungan SDM'; }
+  }
+
+  if (type === 'infaq' || type === 'semua') {
+    infaqData.filter(i => getYearFromDate(i.tgl) === year).forEach(i => {
+      rows.push({
+        'Program': 'Infaq SDM',
+        'Tanggal': i.tgl,
+        'Pegawai/Penerima': i.jenis === 'Setoran' ? (pegawai[i.pgw]?.nama || '-') : i.penerima,
+        'Kategori': capitalize(i.kategori),
+        'Jenis': i.jenis,
+        'Jumlah': i.jumlah,
+        'Status': i.status
+      });
+    });
+    if (type === 'infaq') { title = 'Laporan Infaq SDM'; progLabel = 'Infaq SDM'; }
+  }
+
+  if (type === 'pendidikan' || type === 'semua') {
+    pendidikanData.filter(p => getYearFromDate(p.tgl) === year).forEach(p => {
+      rows.push({
+        'Program': 'Bantuan Pendidikan',
+        'Pegawai': pegawai[p.pegawai]?.nama || '-',
+        'NIP': pegawai[p.pegawai]?.nip || '-',
+        'Anak/Jenjang': p.anak,
+        'Institusi': p.institusi,
+        'Jumlah Bantuan': p.jumlah,
+        'Periode': p.periode,
+        'Tanggal': p.tgl,
+        'Status': p.status
+      });
+    });
+    if (type === 'pendidikan') { title = 'Laporan Bantuan Pendidikan'; progLabel = 'Bantuan Pendidikan'; }
+  }
+
+  if (type === 'kesehatan' || type === 'semua') {
+    kesehatanData.filter(k => getYearFromDate(k.tgl) === year).forEach(k => {
+      rows.push({
+        'Program': 'Bantuan Kesehatan',
+        'Pegawai': pegawai[k.pegawai]?.nama || '-',
+        'NIP': pegawai[k.pegawai]?.nip || '-',
+        'Penerima Manfaat': k.penerima,
+        'Diagnosa': k.diagnosa,
+        'RS/Faskes': k.rs,
+        'Klaim': k.klaim,
+        'Tanggal': k.tgl,
+        'Status': k.status
+      });
+    });
+    if (type === 'kesehatan') { title = 'Laporan Bantuan Kesehatan'; progLabel = 'Bantuan Kesehatan'; }
+  }
+
+  if (type === 'musibah' || type === 'semua') {
+    musibahData.filter(m => getYearFromDate(m.tgl) === year).forEach(m => {
+      rows.push({
+        'Program': 'Bantuan Musibah',
+        'Pegawai': pegawai[m.pegawai]?.nama || '-',
+        'NIP': pegawai[m.pegawai]?.nip || '-',
+        'Jenis Musibah': m.jenis,
+        'Tanggal': m.tgl,
+        'Bantuan': m.bantuan,
+        'Status': m.status
+      });
+    });
+    if (type === 'musibah') { title = 'Laporan Bantuan Musibah'; progLabel = 'Bantuan Musibah'; }
+  }
+
+  if (type === 'semua') title = 'Laporan Gabungan Semua Program';
+
+  return { rows, title, progLabel, year };
+}
+
+function downloadReport(type) {
+  const { rows, title, year } = getReportData(type);
+  if (rows.length === 0) {
+    showToast('Tidak ada data', `Tidak ada data untuk tahun ${year}`, 'warn');
+    return;
+  }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = Object.keys(rows[0]).map(k => ({ wch: Math.max(k.length + 2, 15) }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Laporan');
+  const fname = title.replace(/\s+/g, '_') + '_' + year + '.xlsx';
+  XLSX.writeFile(wb, fname);
+  showToast('Laporan diunduh', fname + ' berhasil disimpan');
+}
+
+function printReport(type) {
+  const { rows, title, year } = getReportData(type);
+  if (rows.length === 0) {
+    showToast('Tidak ada data', `Tidak ada data untuk tahun ${year}`, 'warn');
+    return;
+  }
+  const columns = Object.keys(rows[0]);
+  const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  // Hitung ringkasan
+  const totalNilai = rows.reduce((sum, r) => {
+    const val = r['Nilai/Pokok'] || r['Nilai'] || r['Subsidi'] || r['Jumlah'] || r['Klaim'] || r['Bantuan'] || r['Jumlah Bantuan'] || '';
+    return sum + parseRupiah(val);
+  }, 0);
+
+  const tableHeader = columns.map(c => `<th style="padding:8px;border:1px solid #ddd;background:#f5f5f5;font-size:11px;text-align:left">${c}</th>`).join('');
+  const tableBody = rows.map((r, i) => {
+    return `<tr>${columns.map(c => `<td style="padding:6px 8px;border:1px solid #eee;font-size:11px">${r[c] || '-'}</td>`).join('')}</tr>`;
+  }).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><title>${title} ${year}</title>
+    <style>
+      *{font-family:'Segoe UI',Arial,sans-serif;box-sizing:border-box}
+      body{padding:30px;color:#222;margin:0}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #34d399;padding-bottom:15px;margin-bottom:20px}
+      .logo{display:flex;align-items:center;gap:12px}
+      .logo-box{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#04231b;font-size:18px}
+      h1{font-size:20px;margin:0;color:#0a1410}
+      .subtitle{font-size:12px;color:#666;margin-top:2px}
+      .meta{text-align:right;font-size:11px;color:#666}
+      .meta strong{color:#0a1410}
+      .summary{display:flex;gap:15px;margin:20px 0}
+      .sum-card{flex:1;padding:12px 15px;border:1px solid #e0e0e0;border-radius:8px;background:#fafafa}
+      .sum-card .label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px}
+      .sum-card .value{font-size:16px;font-weight:bold;color:#0a1410;margin-top:4px}
+      table{width:100%;border-collapse:collapse;margin-top:10px}
+      th{background:#0a1410 !important;color:#fff !important}
+      tr:nth-child(even){background:#f9f9f9}
+      .footer{margin-top:30px;padding-top:15px;border-top:1px solid #eee;font-size:10px;color:#999;text-align:center}
+      .sign{margin-top:40px;display:flex;justify-content:space-between}
+      .sign-box{text-align:center;font-size:11px;width:200px}
+      .sign-line{margin-top:60px;border-top:1px solid #333;padding-top:5px}
+      @media print{body{padding:15px}.sum-card{break-inside:avoid}}
+    </style></head><body>
+    <div class="header">
+      <div class="logo">
+        <div class="logo-box">S</div>
+        <div><h1>SIMASRA</h1><div class="subtitle">Sistem Manajemen Kesejahteraan Pegawai</div></div>
+      </div>
+      <div class="meta">
+        <strong>${title}</strong><br>
+        Periode: Tahun ${year}<br>
+        Tanggal Cetak: ${today}<br>
+        Dicetak oleh: ${currentUser?.name || '-'}
+      </div>
+    </div>
+    <div class="summary">
+      <div class="sum-card"><div class="label">Total Entri</div><div class="value">${rows.length}</div></div>
+      <div class="sum-card"><div class="label">Total Nilai</div><div class="value">${formatRupiah(totalNilai)}</div></div>
+      <div class="sum-card"><div class="label">Tahun</div><div class="value">${year}</div></div>
+    </div>
+    <table><thead><tr>${tableHeader}</tr></thead><tbody>${tableBody}</tbody></table>
+    <div class="sign">
+      <div class="sign-box">Dibuat oleh,<div class="sign-line">${currentUser?.name || ''}</div></div>
+      <div class="sign-box">Mengetahui,<div class="sign-line">Pimpinan</div></div>
+    </div>
+    <div class="footer">© ${new Date().getFullYear()} SIMASRA — Dokumen ini diterbitkan oleh Sistem Manajemen Kesejahteraan Pegawai</div>
+    <script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script>
+    </body></html>
+  `);
+  win.document.close();
+}
+
+function downloadLaporanKeuangan() {
+  const year = currentFilterYear;
+  const filteredTrx = keuanganData.filter(t => getYearFromDate(t.tgl) === year);
+  if (filteredTrx.length === 0) {
+    showToast('Tidak ada data', `Tidak ada transaksi untuk tahun ${year}`, 'warn');
+    return;
+  }
+
+  // Sheet 1: Transaksi
+  const trxRows = filteredTrx.map(t => {
+    const akun = akunKeuangan.find(a => a.id === t.akunId);
+    return {
+      'Tanggal': formatTanggal(t.tgl),
+      'Akun': akun?.nama || '-',
+      'Jenis': t.jenis === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran',
+      'Deskripsi': t.desc,
+      'Jumlah': t.jumlah
+    };
+  });
+
+  // Sheet 2: Ringkasan per Akun
+  const akunRows = akunKeuangan.map(ak => {
+    const trxAkun = filteredTrx.filter(t => t.akunId === ak.id);
+    const masuk = trxAkun.filter(t => t.jenis === 'pemasukan').reduce((s, t) => s + t.jumlah, 0);
+    const keluar = trxAkun.filter(t => t.jenis === 'pengeluaran').reduce((s, t) => s + t.jumlah, 0);
+    return {
+      'Nama Akun': ak.nama,
+      'Saldo Awal': ak.saldoAwal,
+      'Total Pemasukan': masuk,
+      'Total Pengeluaran': keluar,
+      'Saldo Akhir': ak.saldoAwal + masuk - keluar
+    };
+  });
+
+  const ws1 = XLSX.utils.json_to_sheet(trxRows);
+  ws1['!cols'] = [{wch:15},{wch:20},{wch:15},{wch:30},{wch:18}];
+  const ws2 = XLSX.utils.json_to_sheet(akunRows);
+  ws2['!cols'] = [{wch:20},{wch:18},{wch:18},{wch:18},{wch:18}];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws1, 'Transaksi');
+  XLSX.utils.book_append_sheet(wb, ws2, 'Ringkasan per Akun');
+  XLSX.writeFile(wb, `Laporan_Keuangan_${year}.xlsx`);
+  showToast('Laporan diunduh', `Laporan_Keuangan_${year}.xlsx berhasil disimpan`);
+}
+
+function printLaporanKeuangan() {
+  const year = currentFilterYear;
+  const filteredTrx = keuanganData.filter(t => getYearFromDate(t.tgl) === year);
+  const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  let totalSaldoAwal = 0, totalMasuk = 0, totalKeluar = 0;
+  const akunSummary = akunKeuangan.map(ak => {
+    const trxAkun = filteredTrx.filter(t => t.akunId === ak.id);
+    const masuk = trxAkun.filter(t => t.jenis === 'pemasukan').reduce((s, t) => s + t.jumlah, 0);
+    const keluar = trxAkun.filter(t => t.jenis === 'pengeluaran').reduce((s, t) => s + t.jumlah, 0);
+    const saldoAkhir = ak.saldoAwal + masuk - keluar;
+    totalSaldoAwal += ak.saldoAwal;
+    totalMasuk += masuk;
+    totalKeluar += keluar;
+    return { nama: ak.nama, saldoAwal: ak.saldoAwal, masuk, keluar, saldoAkhir };
+  });
+
+  const sortedTrx = [...filteredTrx].sort((a, b) => new Date(b.tgl) - new Date(a.tgl));
+  const trxBody = sortedTrx.map(t => {
+    const akun = akunKeuangan.find(a => a.id === t.akunId);
+    const isMasuk = t.jenis === 'pemasukan';
+    return `<tr>
+      <td style="padding:6px 8px;border:1px solid #eee;font-size:11px">${formatTanggal(t.tgl)}</td>
+      <td style="padding:6px 8px;border:1px solid #eee;font-size:11px">${akun?.nama || '-'}</td>
+      <td style="padding:6px 8px;border:1px solid #eee;font-size:11px">${t.desc}</td>
+      <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;color:${isMasuk ? '#10b981' : '#ef4444'};font-weight:600">${isMasuk ? formatRupiah(t.jumlah) : '-'}</td>
+      <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;color:${!isMasuk ? '#ef4444' : '#10b981'};font-weight:600">${!isMasuk ? formatRupiah(t.jumlah) : '-'}</td>
+    </tr>`;
+  }).join('');
+
+  const akunBody = akunSummary.map(a => `<tr>
+    <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;font-weight:600">${a.nama}</td>
+    <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;text-align:right">${formatRupiah(a.saldoAwal)}</td>
+    <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;text-align:right;color:#10b981">${formatRupiah(a.masuk)}</td>
+    <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;text-align:right;color:#ef4444">${formatRupiah(a.keluar)}</td>
+    <td style="padding:6px 8px;border:1px solid #eee;font-size:11px;text-align:right;font-weight:bold">${formatRupiah(a.saldoAkhir)}</td>
+  </tr>`).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`
+    <html><head><title>Laporan Keuangan ${year}</title>
+    <style>
+      *{font-family:'Segoe UI',Arial,sans-serif;box-sizing:border-box}
+      body{padding:30px;color:#222;margin:0}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #34d399;padding-bottom:15px;margin-bottom:20px}
+      .logo{display:flex;align-items:center;gap:12px}
+      .logo-box{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-weight:bold;color:#04231b;font-size:18px}
+      h1{font-size:20px;margin:0;color:#0a1410}
+      .subtitle{font-size:12px;color:#666;margin-top:2px}
+      .meta{text-align:right;font-size:11px;color:#666}
+      .summary{display:flex;gap:12px;margin:20px 0}
+      .sum-card{flex:1;padding:12px 15px;border:1px solid #e0e0e0;border-radius:8px;background:#fafafa}
+      .sum-card .label{font-size:10px;color:#888;text-transform:uppercase}
+      .sum-card .value{font-size:15px;font-weight:bold;margin-top:4px}
+      h2{font-size:14px;margin:25px 0 8px;color:#0a1410;border-left:4px solid #34d399;padding-left:10px}
+      table{width:100%;border-collapse:collapse}
+      th{background:#0a1410;color:#fff;padding:8px;border:1px solid #0a1410;font-size:11px;text-align:left}
+      tr:nth-child(even){background:#f9f9f9}
+      .sign{margin-top:40px;display:flex;justify-content:space-between}
+      .sign-box{text-align:center;font-size:11px;width:200px}
+      .sign-line{margin-top:60px;border-top:1px solid #333;padding-top:5px}
+      .footer{margin-top:25px;padding-top:12px;border-top:1px solid #eee;font-size:10px;color:#999;text-align:center}
+    </style></head><body>
+    <div class="header">
+      <div class="logo"><div class="logo-box">S</div><div><h1>SIMASRA</h1><div class="subtitle">Sistem Manajemen Kesejahteraan Pegawai</div></div></div>
+      <div class="meta"><strong>LAPORAN KEUANGAN</strong><br>Periode: Tahun ${year}<br>Tanggal Cetak: ${today}<br>Dicetak oleh: ${currentUser?.name || '-'}</div>
+    </div>
+    <div class="summary">
+      <div class="sum-card"><div class="label">Total Saldo Awal</div><div class="value" style="color:#666">${formatRupiah(totalSaldoAwal)}</div></div>
+      <div class="sum-card"><div class="label">Total Pemasukan</div><div class="value" style="color:#10b981">${formatRupiah(totalMasuk)}</div></div>
+      <div class="sum-card"><div class="label">Total Pengeluaran</div><div class="value" style="color:#ef4444">${formatRupiah(totalKeluar)}</div></div>
+      <div class="sum-card"><div class="label">Saldo Akhir</div><div class="value" style="color:#0a1410">${formatRupiah(totalSaldoAwal + totalMasuk - totalKeluar)}</div></div>
+    </div>
+    <h2>Ringkasan per Akun</h2>
+    <table><thead><tr><th>Nama Akun</th><th style="text-align:right">Saldo Awal</th><th style="text-align:right">Pemasukan</th><th style="text-align:right">Pengeluaran</th><th style="text-align:right">Saldo Akhir</th></tr></thead><tbody>${akunBody}</tbody></table>
+    <h2>Riwayat Transaksi</h2>
+    <table><thead><tr><th>Tanggal</th><th>Akun</th><th>Deskripsi</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th></tr></thead><tbody>${trxBody}</tbody></table>
+    <div class="sign">
+      <div class="sign-box">Dibuat oleh,<div class="sign-line">${currentUser?.name || ''}</div></div>
+      <div class="sign-box">Mengetahui,<div class="sign-line">Pimpinan</div></div>
+    </div>
+    <div class="footer">© ${new Date().getFullYear()} SIMASRA — Dokumen ini diterbitkan oleh Sistem Manajemen Kesejahteraan Pegawai</div>
+    <script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script>
+    </body></html>
+  `);
+  win.document.close();
+}
+
+// Render ringkasan tabel di view Laporan
+function renderRingkasanLaporan() {
+  const year = currentFilterYear;
+  const programs = [
+    { name: 'Kasbon', data: kasbonData.filter(k => getYearFromDate(k.tgl) === year), valKey: 'pokok' },
+    { name: 'Softloan Laptop', data: softloanData.filter(s => getYearFromDate(s.tgl) === year), valKey: 'nilai' },
+    { name: 'Sewa Rumah', data: sewarumahData.filter(s => getYearFromDate(s.tgl) === year), valKey: 'subsidi' },
+    { name: 'Tabungan SDM', data: tabunganData.filter(t => getYearFromDate(t.tgl) === year), valKey: 'jumlah' },
+    { name: 'Infaq SDM', data: infaqData.filter(i => getYearFromDate(i.tgl) === year), valKey: 'jumlah' },
+    { name: 'Bantuan Pendidikan', data: pendidikanData.filter(p => getYearFromDate(p.tgl) === year), valKey: 'jumlah' },
+    { name: 'Bantuan Kesehatan', data: kesehatanData.filter(k => getYearFromDate(k.tgl) === year), valKey: 'klaim' },
+    { name: 'Bantuan Musibah', data: musibahData.filter(m => getYearFromDate(m.tgl) === year), valKey: 'bantuan' }
+  ];
+  const body = document.getElementById('ringkasanBody');
+  if (!body) return;
+  body.innerHTML = programs.map((p, i) => {
+    const total = p.data.length;
+    const approved = p.data.filter(x => x.status === 'approved' || x.status === 'active' || x.status === 'completed').length;
+    const pending = p.data.filter(x => x.status === 'pending').length;
+    const nilai = p.data.reduce((s, d) => s + parseRupiah(d[p.valKey]), 0);
+    const rate = total > 0 ? Math.round((approved / total) * 100) : 0;
+    return `<tr class="table-row border-t" style="border-color:var(--border)">
+      <td class="p-3 text-sm">${i + 1}</td>
+      <td class="p-3 text-sm font-semibold">${p.name}</td>
+      <td class="p-3 text-sm">${total}</td>
+      <td class="p-3 text-sm" style="color:var(--accent)">${approved}</td>
+      <td class="p-3 text-sm" style="color:var(--warning)">${pending}</td>
+      <td class="p-3 text-sm font-semibold">${formatRupiah(nilai)}</td>
+      <td class="p-3"><div class="flex items-center gap-2"><div class="progress-bar flex-1"><div class="progress-fill" style="width:${rate}%"></div></div><span class="text-xs font-bold" style="min-width:35px">${rate}%</span></div></td>
+    </tr>`;
+  }).join('');
 }
 
 // ===== INIT =====
