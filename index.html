@@ -251,10 +251,17 @@
     </section>
 
     <section id="view-persetujuan" class="view">
-      <div class="glass rounded-xl p-5 mb-4">
+       <div class="glass rounded-xl p-5 mb-4">
         <div class="flex flex-wrap items-center gap-3">
-          <div class="flex gap-2"><button class="btn-primary px-4 py-2 rounded-lg text-xs">Semua</button><button class="btn-ghost px-4 py-2 rounded-lg text-xs">Kasbon Prioritas</button><button class="btn-ghost px-4 py-2 rounded-lg text-xs">Softloan</button><button class="btn-ghost px-4 py-2 rounded-lg text-xs">Bantuan</button></div>
-          <div class="ml-auto flex items-center gap-2"><select class="px-3 py-2 rounded-lg text-xs"><option>Semua Departemen</option><option>Produksi</option><option>Keuangan</option></select><input type="text" placeholder="Cari..." class="px-3 py-2 rounded-lg text-xs w-40"></div>
+          <div class="flex flex-wrap gap-2" id="approvalTypeFilter">
+            <!-- Tombol program akan otomatis muncul di sini -->
+          </div>
+          <div class="ml-auto flex items-center gap-2">
+            <select id="approvalDeptFilter" onchange="filterApproval()" class="px-3 py-2 rounded-lg text-xs">
+              <option value="all">Semua Departemen</option>
+            </select>
+            <input type="text" id="approvalSearch" oninput="filterApproval()" placeholder="Cari nama pegawai..." class="px-3 py-2 rounded-lg text-xs w-40">
+          </div>
         </div>
       </div>
       <div class="space-y-3" id="approvalList"></div>
@@ -828,6 +835,7 @@ async function resetSystem() {
 // ===== DATA & AUTO-SAVE =====
 let pegawai = [], programs = [], timPersetujuan = [], kasbonData = [], tabunganData = [], infaqData = [], sewarumahData = [], softloanData = [], pendidikanData = [], kesehatanData = [], musibahData = [], pensiunData = [], customData = [], importedData = [], akunKeuangan = [], keuanganData = [];
 let pegawaiFilterText = '', kasbonFilter = 'all', tabunganFilter = 'all', infaqFilter = 'all';
+let approvalFilterType = 'all', approvalFilterDept = 'all', approvalSearchText = '';
 let editingPegawaiIdx = -1, deletingPegawaiIdx = -1, editingTimIdx = -1, deletingTimIdx = -1, editingUserIdx = -1, deletingUserIdx = -1, editingProgramIdx = -1, deletingProgramIdx = -1, editingEntryType = null, editingEntryIdx = -1, deletingEntryType = null, deletingEntryIdx = -1, editingKeuanganIdx = -1, deletingKeuanganIdx = -1, editingAkunIdx = -1, deletingAkunIdx = -1;
 let currentViewPegawaiIdx = -1;
 let currentFilterYear = new Date().getFullYear();
@@ -1256,9 +1264,12 @@ function viewEntry(type, idx) {
     addRow('Tanggal', data.tgl);
     addRow('Jenis Musibah', data.jenis);
     addRow('Bantuan Diberikan', data.bantuan);
-  } else if (type === 'pensiun') {
+    } else if (type === 'pensiun') {
+    const peg = pegawai[data.pegawai];
+    const usiaOtomatis = peg ? calculateAge(peg.tglLahir) : null;
+    
     addRow('Tanggal Pensiun', data.tgl);
-    addRow('Usia Pensiun', data.usia);
+    addRow('Usia Pegawai', usiaOtomatis !== null ? usiaOtomatis + ' Tahun' : '-');
     addRow('Dana Akumulasi', data.dana);
     addRow('Skema Pencairan', data.skema);
   } else {
@@ -2086,10 +2097,8 @@ function renderMusibah(){
 }
 
 function renderPensiun(){
-  // Hapus filter tahun agar semua data pensiun tampil
   let filtered = [...pensiunData];
   
-  // Urutkan berdasarkan status pending terlebih dahulu, lalu berdasarkan tanggal
   filtered.sort((a, b) => {
     if(a.status === 'pending' && b.status !== 'pending') return -1;
     if(a.status !== 'pending' && b.status === 'pending') return 1;
@@ -2107,9 +2116,15 @@ function renderPensiun(){
   
   document.getElementById('pensiunTable').innerHTML=filtered.map(p => {
     const idx = pensiunData.indexOf(p);
+    
+    // Hitung usia otomatis berdasarkan tanggal lahir pegawai
+    const peg = pegawai[p.pegawai];
+    const usiaOtomatis = peg ? calculateAge(peg.tglLahir) : null;
+    const tampilUsia = usiaOtomatis !== null ? usiaOtomatis + ' Tahun' : '-';
+    
     return `<tr class="table-row border-t" style="border-color:var(--border)">
       <td class="p-4">${avatar(p.pegawai)}</td>
-      <td class="p-4 text-sm">${p.usia}</td>
+      <td class="p-4 text-sm">${tampilUsia}</td>
       <td class="p-4 text-sm">${p.tgl}</td>
       <td class="p-4 font-semibold" style="color:var(--accent-2)">${p.dana}</td>
       <td class="p-4 text-sm">${p.skema}</td>
@@ -2118,7 +2133,6 @@ function renderPensiun(){
     </tr>`;
   }).join('');
 
-  // Update Statistik Karti di atas tabel
   const totalDana = filtered.reduce((s, d) => s + parseRupiah(d.dana), 0);
   document.getElementById('pensiunTotalDana').textContent = formatShortRupiah(totalDana);
   document.getElementById('pensiunMendekat').textContent = filtered.filter(d => d.status === 'pending').length;
@@ -2146,6 +2160,39 @@ function renderPegawai(){
   document.getElementById('pegawaiCount').textContent = pegawai.length + ' Total';
 }
 
+function renderApprovalFilters() {
+  // 1. Populate Departemen
+  const deptSelect = document.getElementById('approvalDeptFilter');
+  const currentDept = deptSelect.value || 'all';
+  const depts = [...new Set(pegawai.map(p => p.dept))].sort();
+  deptSelect.innerHTML = `<option value="all">Semua Departemen</option>` + depts.map(d => `<option value="${d}">${d}</option>`).join('');
+  deptSelect.value = currentDept;
+
+  // 2. Populate Tombol Program
+  const btnContainer = document.getElementById('approvalTypeFilter');
+  const types = [{id: 'all', label: 'Semua', color: null}];
+  programs.forEach(p => types.push({id: p.id, label: p.label, color: p.color}));
+  
+  btnContainer.innerHTML = types.map(t => {
+    const isActive = approvalFilterType === t.id;
+    const cls = isActive ? 'btn-primary' : 'btn-ghost';
+    const styleAttr = (!isActive && t.color) ? `style="color:${t.color}; border-color:${t.color}40;"` : '';
+    return `<button onclick="setApprovalFilterType('${t.id}')" class="${cls} px-4 py-2 rounded-lg text-xs" ${styleAttr}>${t.label}</button>`;
+  }).join('');
+}
+
+function setApprovalFilterType(type) {
+  approvalFilterType = type;
+  renderApprovalFilters(); // Update tombol active
+  renderApprovalList();
+}
+
+function filterApproval() {
+  approvalFilterDept = document.getElementById('approvalDeptFilter').value;
+  approvalSearchText = document.getElementById('approvalSearch').value.toLowerCase();
+  renderApprovalList();
+}
+
 function renderApprovalList() {
   const items = [];
   const mapData = (array, type, icon, color, getAmt) => {
@@ -2170,9 +2217,27 @@ function renderApprovalList() {
   mapData(tabunganData, 'tabungan', 'fa-piggy-bank', '#34d399', t => t.jumlah);
   mapData(infaqData, 'infaq', 'fa-hand-holding-heart', '#10b981', i => i.jumlah);
 
-  if(items.length === 0) { document.getElementById('approvalList').innerHTML = `<div class="glass rounded-xl p-8 text-center text-sm" style="color:var(--muted)">Tidak ada pengajuan menunggu persetujuan untuk tahun ${currentFilterYear}</div>`; return; }
+  // Terapkan Filter
+  let filteredItems = items.filter(item => {
+    // Filter berdasarkan Program
+    if (approvalFilterType !== 'all' && item.type !== approvalFilterType) return false;
+    
+    // Filter berdasarkan Departemen
+    const peg = pegawai[item.pgw];
+    if (approvalFilterDept !== 'all' && (!peg || peg.dept !== approvalFilterDept)) return false;
+    
+    // Filter berdasarkan Pencarian Nama
+    if (approvalSearchText && (!peg || !peg.nama.toLowerCase().includes(approvalSearchText))) return false;
+    
+    return true;
+  });
 
-  document.getElementById('approvalList').innerHTML = items.map(r => `
+  if(filteredItems.length === 0) { 
+    document.getElementById('approvalList').innerHTML = `<div class="glass rounded-xl p-8 text-center text-sm" style="color:var(--muted)">Tidak ada pengajuan menunggu persetujuan untuk filter ini.</div>`; 
+    return; 
+  }
+
+  document.getElementById('approvalList').innerHTML = filteredItems.map(r => `
     <div class="glass rounded-xl p-4 hover:scale-[1.005] transition" style="${r.priority?'border:1px solid rgba(248,113,113,0.3);background:linear-gradient(90deg, rgba(248,113,113,0.05), transparent);':''}">
       <div class="flex items-center gap-4">
         <div class="icon-tile flex-shrink-0" style="background:${r.color}22;color:${r.color}"><i class="fa-solid ${r.icon}"></i></div>
@@ -2219,7 +2284,7 @@ function approveEntry(type, idx) {
   if (data) {
     data.status = 'approved';
     saveData();
-    renderApprovalList();
+    renderAll(); // <--- INI DITAMBAHKAN agar dashboard & semua tabel ikut update
     showToast('Pengajuan disetujui', 'Status telah diperbarui menjadi disetujui');
   }
 }
@@ -2619,7 +2684,7 @@ function updateModalHeader(){
   document.getElementById('modalIcon').style.background=hexToRgba(p.color, 0.15);document.getElementById('modalIcon').style.color=p.color;document.getElementById('modalIcon').innerHTML=`<i class="fa-solid ${p.icon}"></i>`;
   if(!editingEntryType) document.getElementById('modalTitle').textContent='Form '+p.label; 
   document.getElementById('modalSub').textContent=p.desc;
-  const fields={kasbon:[['Kategori Kasbon','select:Pendidikan, Kesehatan, Lainnya'],['Jumlah Pinjaman','Rp 0'],['Tenor (bulan)','10'],['Tujuan Pinjaman','text']],softloan:[['Tipe Laptop','contoh: MacBook Air M2'],['Harga','Rp 0'],['Tenor (bulan)','12'],['Cicilan/Bulan','Rp 0']],sewarumah:[['Alamat Rumah','text'],['Sewa per Bulan','Rp 0'],['Subsidi Diminta','75%'],['Mulai Sewa','date']],tabungan:[['Kategori Tabungan','select:Qurban, Umrah, Hari Raya, Rihlah, Pendidikan, Lainnya'],['Jenis','select:Setoran, Penarikan'],['Jumlah','Rp 0'],['Metode','select:Transfer, Cash, Potong Payroll'],['Tanggal','date']],pensiun:[['Usia Pensiun','select:58 Tahun, 60 Tahun'],['Tanggal Pensiun','date'],['Dana Akumulasi','Rp 0'],['Skema Pencairan','select:Lump Sum, Berkala Bulanan']],infaq:[['Kategori Infaq','select:Dunia Islam, Dakwah Sosial, Kesehatan, Lainnya'],['Jenis','select:Setoran, Penyaluran'],['Penerima / Sumber','text'],['Jumlah','Rp 0'],['Tanggal','date']],pendidikan:[['Nama Anak','text'],['Jenjang','select:SD, SMP, SMA, Kuliah'],['Institusi','text'],['Semester/Tahun','text']],kesehatan:[['Penerima','select:Diri Sendiri, Suami/Istri, Anak'],['Diagnosa','text'],['RS/Faskes','text'],['Tanggal Kunjungan','date']],musibah:[['Jenis Musibah','select:Kebakaran, Banjir, Kecelakaan, Wafat Keluarga, Lainnya'],['Tanggal Kejadian','date'],['Lokasi','text'],['Estimasi Kerugian','Rp 0']]};
+  const fields={kasbon:[['Kategori Kasbon','select:Pendidikan, Kesehatan, Lainnya'],['Jumlah Pinjaman','Rp 0'],['Tenor (bulan)','10'],['Tujuan Pinjaman','text']],softloan:[['Tipe Laptop','contoh: MacBook Air M2'],['Harga','Rp 0'],['Tenor (bulan)','12'],['Cicilan/Bulan','Rp 0']],sewarumah:[['Alamat Rumah','text'],['Sewa per Bulan','Rp 0'],['Subsidi Diminta','75%'],['Mulai Sewa','date']],tabungan:[['Kategori Tabungan','select:Qurban, Umrah, Hari Raya, Rihlah, Pendidikan, Lainnya'],['Jenis','select:Setoran, Penarikan'],['Jumlah','Rp 0'],['Metode','select:Transfer, Cash, Potong Payroll'],['Tanggal','date']],pensiun:[['Tanggal Pensiun','date'],['Dana Akumulasi','Rp 0'],['Skema Pencairan','select:Lump Sum, Berkala Bulanan']],infaq:[['Kategori Infaq','select:Dunia Islam, Dakwah Sosial, Kesehatan, Lainnya'],['Jenis','select:Setoran, Penyaluran'],['Penerima / Sumber','text'],['Jumlah','Rp 0'],['Tanggal','date']],pendidikan:[['Nama Anak','text'],['Jenjang','select:SD, SMP, SMA, Kuliah'],['Institusi','text'],['Semester/Tahun','text']],kesehatan:[['Penerima','select:Diri Sendiri, Suami/Istri, Anak'],['Diagnosa','text'],['RS/Faskes','text'],['Tanggal Kunjungan','date']],musibah:[['Jenis Musibah','select:Kebakaran, Banjir, Kecelakaan, Wafat Keluarga, Lainnya'],['Tanggal Kejadian','date'],['Lokasi','text'],['Estimasi Kerugian','Rp 0']]};
   if(!fields[v]) fields[v] = [['Jumlah / Nilai', 'Rp 0'], ['Keterangan', 'text']];
   const fl=fields[v]||[];
   document.getElementById('dynamicFields').innerHTML=fl.map(([label,type])=>{const id = 'fld_' + label.split(' ')[0].toLowerCase().replace(/\W/g, '');if(type.startsWith('select:')){const opts=type.split(':')[1].split(',').map(o=>`<option>${o.trim()}</option>`).join('');return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><select id="${id}" class="w-full px-3 py-2 rounded-lg text-sm">${opts}</select></div>`;}if(type==='date')return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><input type="date" id="${id}" class="w-full px-3 py-2 rounded-lg text-sm"></div>`;return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><input type="text" id="${id}" placeholder="${type==='text'?'':type}" class="w-full px-3 py-2 rounded-lg text-sm"></div>`;}).join('');
@@ -2683,7 +2748,20 @@ function submitForm(e){
   } else if (v === 'pendidikan') { const payload = {pegawai: pegawaiIdx, anak: `${val('fld_nama')} / ${val('fld_jenjang')}`, institusi: val('fld_institusi'), periode: val('fld_semestertahun'), tgl: today, catatan}; if(isEdit) { pendidikanData[editingEntryIdx] = {...pendidikanData[editingEntryIdx], ...payload, jumlah: pendidikanData[editingEntryIdx].jumlah}; } else { pendidikanData.push({...payload, jumlah: 'Rp 0', status: 'pending'}); } renderPendidikan();
   } else if (v === 'kesehatan') { const payload = {pegawai: pegawaiIdx, penerima: val('fld_penerima'), diagnosa: val('fld_diagnosa'), rs: val('fld_rsfaskes'), tgl: today, catatan}; if(isEdit) { kesehatanData[editingEntryIdx] = {...kesehatanData[editingEntryIdx], ...payload, klaim: kesehatanData[editingEntryIdx].klaim}; } else { kesehatanData.push({...payload, klaim: 'Rp 0', status: 'pending'}); } renderKesehatan();
   } else if (v === 'musibah') { const payload = {pegawai: pegawaiIdx, jenis: val('fld_jenis'), tgl: today, bantuan: val('fld_estimasi'), catatan}; if(isEdit) { musibahData[editingEntryIdx] = {...musibahData[editingEntryIdx], ...payload}; } else { musibahData.push({...payload, status: 'pending'}); } renderMusibah();
-  } else if (v === 'pensiun') { const payload = {pegawai: pegawaiIdx, usia: val('fld_usia'), tgl: formatTanggal(val('fld_tanggal')), dana: val('fld_dana'), skema: val('fld_skema'), catatan}; if(isEdit) { pensiunData[editingEntryIdx] = {...pensiunData[editingEntryIdx], ...payload}; } else { pensiunData.push({...payload, status: 'pending'}); } renderPensiun();
+    } else if (v === 'pensiun') { 
+    const peg = pegawai[pegawaiIdx];
+    const usiaOtomatis = calculateAge(peg?.tglLahir);
+    const payload = {
+      pegawai: pegawaiIdx, 
+      usia: usiaOtomatis !== null ? usiaOtomatis + ' Tahun' : '-', 
+      tgl: formatTanggal(val('fld_tanggal')), 
+      dana: val('fld_dana'), 
+      skema: val('fld_skema'), 
+      catatan
+    }; 
+    if(isEdit) { pensiunData[editingEntryIdx] = {...pensiunData[editingEntryIdx], ...payload}; } 
+    else { pensiunData.push({...payload, status: 'pending'}); } 
+    renderPensiun();
   } else { const payload = { pegawai: pegawaiIdx, jenis: v, tgl: today, catatan: catatan, jumlah: val('fld_jumlahnilai'), keterangan: val('fld_keterangan') }; if(isEdit) { const idx = customData.findIndex(c => c.jenis === editingEntryType && c.idx === editingEntryIdx); if(idx > -1) customData[idx] = {...customData[idx], ...payload}; } else { const newIdx = customData.filter(c => c.jenis === v).length; customData.push({...payload, idx: newIdx, status: 'pending'}); } showToast('Pengajuan dikirim', 'Pengajuan program kustom tersimpan'); }
   saveData();closeModal('modalPengajuan');
 
@@ -2709,6 +2787,7 @@ if(dropZone){dropZone.addEventListener('dragover',(e)=>{e.preventDefault();dropZ
 function renderDashboardPensiun() {
   const list = document.getElementById('pensiunAutoList');
   if(!list) return;
+  
   const pensiunan = pegawai.filter(p => {
     const usia = calculateAge(p.tglLahir);
     return usia !== null && usia >= 58;
@@ -2721,6 +2800,10 @@ function renderDashboardPensiun() {
   
   list.innerHTML = pensiunan.map(p => {
     const usia = calculateAge(p.tglLahir);
+    const idx = pegawai.indexOf(p);
+    // Cek apakah pegawai ini sudah ada di daftar pensiunData
+    const sudahAjukan = pensiunData.some(pd => pd.pegawai === idx);
+    
     return `
     <div class="flex items-center gap-3 p-3 rounded-lg" style="background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.2)">
       <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0" style="background:linear-gradient(135deg,${p.color},#fbbf24);color:#04231b">${initials(p.nama)}</div>
@@ -2728,14 +2811,19 @@ function renderDashboardPensiun() {
         <div class="text-sm font-semibold truncate">${p.nama}</div>
         <div class="text-xs" style="color:var(--muted)">${p.jabatan} · ${p.dept}</div>
       </div>
-      <span class="badge badge-pending"><i class="fa-solid fa-hourglass-end"></i> ${usia} Thn</span>
+      ${sudahAjukan ? 
+        `<span class="badge badge-approved"><i class="fa-solid fa-check-circle"></i> Sudah Diajukan</span>` : 
+        `<button onclick="openModal('modalPengajuan','pensiun'); setTimeout(() => document.getElementById('formPegawaiSelect').value=${idx}, 100)" class="btn-outline px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+          <i class="fa-solid fa-plus"></i> Ajukan
+        </button>`
+      }
     </div>`;
   }).join('');
 }
 
 function renderAll() { 
   initCharts(); 
-  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPensiun();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();renderRingkasanLaporan();renderDashboardPensiun();updateDashboardStats();updateAllStatCards(); 
+  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPensiun();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalFilters();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();renderRingkasanLaporan();renderDashboardPensiun();updateDashboardStats();updateAllStatCards(); 
 }
 
 // ===== REPORT FUNCTIONS (Unduh & Cetak) =====
