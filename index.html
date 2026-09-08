@@ -210,7 +210,7 @@
         <div class="relative">
           <div class="flex items-center gap-2 mb-2"><div class="pulse-dot"></div><span class="text-xs uppercase tracking-wider" style="color:var(--accent)">Sistem Aktif</span></div>
           <h2 class="font-display text-2xl md:text-3xl font-bold mb-2">Selamat datang, <span id="welcomeName">Rina Hartanti</span></h2>
-          <p class="text-sm max-w-xl" style="color:var(--muted)">Total nilai tunjangan kesejahteraan pegawai aktif pada tahun <span class="year-label">2024</span> ini mencapai <span class="font-semibold text-white">Rp 2,4 Miliar</span>.</p>
+          <p class="text-sm max-w-xl" style="color:var(--muted)">Total nilai tunjangan kesejahteraan pegawai aktif pada tahun <span class="year-label">2024</span> ini mencapai <span class="font-semibold text-white" id="statTotalTunjangan">Rp 0</span>.</p>
           <div class="flex flex-wrap gap-2 mt-4"><button onclick="openModal('modalPengajuan')" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Buat Pengajuan</button><button onclick="navTo('laporan')" class="btn-ghost px-4 py-2 rounded-lg text-sm flex items-center gap-2"><i class="fa-solid fa-chart-line"></i> Lihat Laporan</button></div>
         </div>
       </div>
@@ -2535,14 +2535,28 @@ function updateAllStatCards() {
 
 function updateDashboardStats() {
   const totalKasbon = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.pokok), 0);
-  const totalSoftloan = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length;
+  const totalSoftloanUnit = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length;
+  const totalSoftloanNilai = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).reduce((sum, s) => sum + parseRupiah(s.nilai), 0); 
   const totalTabungan = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear).reduce((sum, t) => sum + Math.abs(parseRupiah(t.jumlah)), 0);
-  const totalBantuan = [...sewarumahData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData, ...pensiunData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).reduce((sum, item) => sum + parseRupiah(item.subsidi || item.jumlah || item.klaim || item.bantuan || item.dana || 0), 0);
+  const totalSewa = sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).reduce((sum, s) => sum + parseRupiah(s.subsidi), 0);
+  const totalInfaq = infaqData.filter(i => getYearFromDate(i.tgl) === currentFilterYear).reduce((sum, i) => sum + Math.abs(parseRupiah(i.jumlah)), 0);
+  const totalPendidikan = pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).reduce((sum, p) => sum + parseRupiah(p.jumlah), 0);
+  const totalKesehatan = kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.klaim), 0);
+  const totalMusibah = musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).reduce((sum, m) => sum + parseRupiah(m.bantuan), 0);
+  const totalPensiun = pensiunData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).reduce((sum, p) => sum + parseRupiah(p.dana), 0);
 
+  // Hitung Total Keseluruhan dari semua program
+  const grandTotal = totalKasbon + totalSoftloanNilai + totalTabungan + totalSewa + totalInfaq + totalPendidikan + totalKesehatan + totalMusibah + totalPensiun;
+
+  // Update teks di dashboard
   document.getElementById('statKasbon').textContent = formatShortRupiah(totalKasbon);
-  document.getElementById('statSoftloan').textContent = totalSoftloan + ' unit';
+  document.getElementById('statSoftloan').textContent = totalSoftloanUnit + ' unit';
   document.getElementById('statTabungan').textContent = formatShortRupiah(totalTabungan);
-  document.getElementById('statBantuan').textContent = formatShortRupiah(totalBantuan);
+  document.getElementById('statBantuan').textContent = formatShortRupiah(totalSewa + totalInfaq + totalPendidikan + totalKesehatan + totalMusibah);
+  
+  // Tampilkan grand total secara dinamis
+  const elTotalTunjangan = document.getElementById('statTotalTunjangan');
+  if(elTotalTunjangan) elTotalTunjangan.textContent = formatRupiah(grandTotal);
 }
 
 function initCharts(){
@@ -2656,8 +2670,14 @@ function openModal(id, arg) {
     if(select) { select.innerHTML = pegawai.map((p,i)=>`<option value="${i}">${p.nama} — ${p.dept}</option>`).join(''); }
     const formJenis = document.getElementById('formJenis');
     formJenis.innerHTML = programs.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
-    if(typeof arg === 'string' || arg === undefined) { editingEntryType = null; editingEntryIdx = -1; document.getElementById('formJenis').disabled = false; document.getElementById('formPengajuan').reset(); document.getElementById('modalTitle').textContent = 'Form Pengajuan Baru'; }
-    if(arg){formJenis.value=arg;}
+    
+    // Cegah reset form jika sedang dalam mode Edit
+    if(editingEntryType === null) { 
+      document.getElementById('formJenis').disabled = false; 
+      document.getElementById('formPengajuan').reset(); 
+      document.getElementById('modalTitle').textContent = 'Form Pengajuan Baru'; 
+      if(arg){formJenis.value=arg;}
+    }
     updateModalHeader();
   }
   if(id === 'modalPegawai') {
@@ -2670,19 +2690,21 @@ function openModal(id, arg) {
       document.getElementById('pegNIP').value = p.nip; document.getElementById('pegNIP').readOnly = true;
       document.getElementById('pegNama').value = p.nama; document.getElementById('pegBidang').value = p.bidang || '';
       document.getElementById('pegDept').value = p.dept; document.getElementById('pegJabatan').value = p.jabatan; document.getElementById('pegTglMulai').value = p.tglMulai || '';
+      document.getElementById('pegTglLahir').value = p.tglLahir || '';
     } else {
       document.getElementById('modalPegawaiTitle').innerText = 'Tambah Pegawai Baru';
       document.getElementById('pegNIP').readOnly = false;
     }
   }
 }
+
 function closeModal(id){const modal=document.getElementById(id);modal.classList.add('hidden');modal.classList.remove('flex');if(id === 'modalPengajuan') {editingEntryType = null; editingEntryIdx = -1; document.getElementById('formJenis').disabled = false;}}
 document.querySelectorAll('.modal-backdrop').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m){closeModal(m.id);}});});
 
 function updateModalHeader(){
   const v=document.getElementById('formJenis').value;const p=programs.find(x=>x.id===v);if(!p)return;
   document.getElementById('modalIcon').style.background=hexToRgba(p.color, 0.15);document.getElementById('modalIcon').style.color=p.color;document.getElementById('modalIcon').innerHTML=`<i class="fa-solid ${p.icon}"></i>`;
-  if(!editingEntryType) document.getElementById('modalTitle').textContent='Form '+p.label; 
+  if(editingEntryType === null) document.getElementById('modalTitle').textContent='Form '+p.label; 
   document.getElementById('modalSub').textContent=p.desc;
   const fields={kasbon:[['Kategori Kasbon','select:Pendidikan, Kesehatan, Lainnya'],['Jumlah Pinjaman','Rp 0'],['Tenor (bulan)','10'],['Tujuan Pinjaman','text']],softloan:[['Tipe Laptop','contoh: MacBook Air M2'],['Harga','Rp 0'],['Tenor (bulan)','12'],['Cicilan/Bulan','Rp 0']],sewarumah:[['Alamat Rumah','text'],['Sewa per Bulan','Rp 0'],['Subsidi Diminta','75%'],['Mulai Sewa','date']],tabungan:[['Kategori Tabungan','select:Qurban, Umrah, Hari Raya, Rihlah, Pendidikan, Lainnya'],['Jenis','select:Setoran, Penarikan'],['Jumlah','Rp 0'],['Metode','select:Transfer, Cash, Potong Payroll'],['Tanggal','date']],pensiun:[['Tanggal Pensiun','date'],['Dana Akumulasi','Rp 0'],['Skema Pencairan','select:Lump Sum, Berkala Bulanan']],infaq:[['Kategori Infaq','select:Dunia Islam, Dakwah Sosial, Kesehatan, Lainnya'],['Jenis','select:Setoran, Penyaluran'],['Penerima / Sumber','text'],['Jumlah','Rp 0'],['Tanggal','date']],pendidikan:[['Nama Anak','text'],['Jenjang','select:SD, SMP, SMA, Kuliah'],['Institusi','text'],['Semester/Tahun','text']],kesehatan:[['Penerima','select:Diri Sendiri, Suami/Istri, Anak'],['Diagnosa','text'],['RS/Faskes','text'],['Tanggal Kunjungan','date']],musibah:[['Jenis Musibah','select:Kebakaran, Banjir, Kecelakaan, Wafat Keluarga, Lainnya'],['Tanggal Kejadian','date'],['Lokasi','text'],['Estimasi Kerugian','Rp 0']]};
   if(!fields[v]) fields[v] = [['Jumlah / Nilai', 'Rp 0'], ['Keterangan', 'text']];
@@ -2690,31 +2712,124 @@ function updateModalHeader(){
   document.getElementById('dynamicFields').innerHTML=fl.map(([label,type])=>{const id = 'fld_' + label.split(' ')[0].toLowerCase().replace(/\W/g, '');if(type.startsWith('select:')){const opts=type.split(':')[1].split(',').map(o=>`<option>${o.trim()}</option>`).join('');return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><select id="${id}" class="w-full px-3 py-2 rounded-lg text-sm">${opts}</select></div>`;}if(type==='date')return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><input type="date" id="${id}" class="w-full px-3 py-2 rounded-lg text-sm"></div>`;return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><input type="text" id="${id}" placeholder="${type==='text'?'':type}" class="w-full px-3 py-2 rounded-lg text-sm"></div>`;}).join('');
   const uploadArea = document.getElementById('uploadArea');
   if(v === 'sewarumah') {uploadArea.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-3 gap-3"><div><label class="text-xs font-semibold mb-1.5 block">KTP Pemilik Rumah <span style="color:var(--danger)">*</span></label><div class="upload-box" onclick="document.getElementById('file_ktp').click()"><input type="file" id="file_ktp" class="hidden" onchange="handleUpload(this)"><i class="fa-solid fa-id-card text-lg mb-1" style="color:var(--muted)"></i><div class="text-xs font-semibold" id="label_file_ktp">Klik untuk unggah</div><div class="text-[10px] mt-1" style="color:var(--muted)">JPG/PNG/PDF</div></div></div><div><label class="text-xs font-semibold mb-1.5 block">Photo Rumah <span style="color:var(--danger)">*</span></label><div class="upload-box" onclick="document.getElementById('file_photo').click()"><input type="file" id="file_photo" class="hidden" onchange="handleUpload(this)"><i class="fa-solid fa-image text-lg mb-1" style="color:var(--muted)"></i><div class="text-xs font-semibold" id="label_file_photo">Klik untuk unggah</div><div class="text-[10px] mt-1" style="color:var(--muted)">JPG/PNG</div></div></div><div><label class="text-xs font-semibold mb-1.5 block">Bukti / Kwitansi Sewa <span style="color:var(--danger)">*</span></label><div class="upload-box" onclick="document.getElementById('file_kwitansi').click()"><input type="file" id="file_kwitansi" class="hidden" onchange="handleUpload(this)"><i class="fa-solid fa-file-invoice text-lg mb-1" style="color:var(--muted)"></i><div class="text-xs font-semibold" id="label_file_kwitansi">Klik untuk unggah</div><div class="text-[10px] mt-1" style="color:var(--muted)">JPG/PNG/PDF</div></div></div></div>`;} else {uploadArea.innerHTML = `<div><label class="text-xs font-semibold mb-1.5 block">Unggah Dokumen Pendukung</label><div class="upload-box" onclick="document.getElementById('file_general').click()"><input type="file" id="file_general" class="hidden" onchange="handleUpload(this)"><i class="fa-solid fa-cloud-arrow-up text-lg mb-1" style="color:var(--muted)"></i><div class="text-xs font-semibold" id="label_file_general">Klik atau seret file ke sini</div><div class="text-[10px] mt-1" style="color:var(--muted)">Format: PDF, JPG, PNG (Maks 5MB)</div></div></div>`;}
-  if(editingEntryType && editingEntryIdx >= 0) {editEntry(editingEntryType, editingEntryIdx);}
 }
 
 function handleUpload(input) { if (input.files.length > 0) { const fileName = input.files[0].name; document.getElementById('label_' + input.id).textContent = fileName; document.getElementById('label_' + input.id).style.color = 'var(--accent)'; showToast('File Terunggah', fileName + ' siap dikirim', 'ok'); } }
 
 function editEntry(type, idx) {
-  editingEntryType = type; editingEntryIdx = idx;
-  openModal('modalPengajuan', type);
-  document.getElementById('formJenis').value = type; document.getElementById('formJenis').disabled = true;
+  editingEntryType = type; 
+  editingEntryIdx = idx;
+  
+  // Buka modal secara manual agar tidak bentrok dengan openModal
+  const modal = document.getElementById('modalPengajuan');
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+
+  // Isi dropdown pegawai
+  const select = document.getElementById('formPegawaiSelect');
+  if(select) { select.innerHTML = pegawai.map((p,i)=>`<option value="${i}">${p.nama} — ${p.dept}</option>`).join(''); }
+  
+  // Set dropdown jenis program sesuai type yang diedit
+  const formJenis = document.getElementById('formJenis');
+  formJenis.innerHTML = programs.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
+  formJenis.value = type; 
+  formJenis.disabled = true;
+  
   document.getElementById('modalTitle').textContent = 'Edit Data ' + (programs.find(p=>p.id===type)?.label || type);
+  
+  // PENTING: Render ulang header & form agar input sesuai dengan jenis program yang diedit
+  updateModalHeader();
+
+  // Ambil data yang akan diedit
   let data;
-  if (type === 'kasbon') data = kasbonData[idx]; else if (type === 'softloan') data = softloanData[idx]; else if (type === 'sewarumah') data = sewarumahData[idx]; else if (type === 'tabungan') data = tabunganData[idx]; else if (type === 'infaq') data = infaqData[idx]; else if (type === 'pendidikan') data = pendidikanData[idx]; else if (type === 'kesehatan') data = kesehatanData[idx]; else if (type === 'musibah') data = musibahData[idx]; else if (type === 'pensiun') data = pensiunData[idx]; else { data = customData.find(c => c.jenis === type && c.idx === idx); if(!data) return; }
+  if (type === 'kasbon') data = kasbonData[idx]; 
+  else if (type === 'softloan') data = softloanData[idx]; 
+  else if (type === 'sewarumah') data = sewarumahData[idx]; 
+  else if (type === 'tabungan') data = tabunganData[idx]; 
+  else if (type === 'infaq') data = infaqData[idx]; 
+  else if (type === 'pendidikan') data = pendidikanData[idx]; 
+  else if (type === 'kesehatan') data = kesehatanData[idx]; 
+  else if (type === 'musibah') data = musibahData[idx]; 
+  else if (type === 'pensiun') data = pensiunData[idx]; 
+  else { data = customData.find(c => c.jenis === type && c.idx === idx); if(!data) return; }
+  
   if(!data) return;
+  
+  // Isi pegawai dan catatan
   document.getElementById('formPegawaiSelect').value = data.pegawai !== undefined ? data.pegawai : (data.pgw !== undefined ? data.pgw : 0);
   document.getElementById('formCatatan').value = data.catatan || '';
-  if (type === 'kasbon') { document.getElementById('fld_kategori').value = capitalize(data.kategori); document.getElementById('fld_jumlah').value = data.pokok; document.getElementById('fld_tenor').value = parseInt(data.tenor);
-  } else if (type === 'softloan') { document.getElementById('fld_tipe').value = data.laptop; document.getElementById('fld_harga').value = data.nilai; document.getElementById('fld_tenor').value = parseInt(data.tenor); document.getElementById('fld_cicilanbulan').value = data.cicilan;
-  } else if (type === 'sewarumah') { document.getElementById('fld_alamat').value = data.lokasi; document.getElementById('fld_sewa').value = data.sewa; document.getElementById('fld_subsidi').value = data.subsidi.includes('%') ? data.subsidi : '75%';
-  } else if (type === 'tabungan') { document.getElementById('fld_kategori').value = capitalize(data.kategori); document.getElementById('fld_jenis').value = data.jenis; document.getElementById('fld_jumlah').value = data.jumlah;
-  } else if (type === 'infaq') { document.getElementById('fld_kategori').value = capitalize(data.kategori); document.getElementById('fld_jenis').value = data.jenis; document.getElementById('fld_penerima').value = data.penerima; document.getElementById('fld_jumlah').value = data.jumlah;
-  } else if (type === 'pendidikan') { document.getElementById('fld_nama').value = data.anak.split(' / ')[0] || ''; const jenjang = data.anak.match(/SD|SMP|SMA|Kuliah/)?.[0] || 'SMA'; document.getElementById('fld_jenjang').value = jenjang; document.getElementById('fld_institusi').value = data.institusi; document.getElementById('fld_semestertahun').value = data.periode;
-  } else if (type === 'kesehatan') { document.getElementById('fld_penerima').value = data.penerima.includes('Diri sendiri') ? 'Diri Sendiri' : (data.penerima.includes('Anak') ? 'Anak' : 'Suami/Istri'); document.getElementById('fld_diagnosa').value = data.diagnosa; document.getElementById('fld_rsfaskes').value = data.rs;
-  } else if (type === 'musibah') { document.getElementById('fld_jenis').value = data.jenis; document.getElementById('fld_estimasi').value = data.bantuan;
-  } else if (type === 'pensiun') { document.getElementById('fld_usia').value = data.usia; const pDate = new Date(data.tgl); if(!isNaN(pDate.getTime())) document.getElementById('fld_tanggal').value = pDate.toISOString().split('T')[0]; document.getElementById('fld_dana').value = data.dana; document.getElementById('fld_skema').value = data.skema;
-  } else { if(document.getElementById('fld_jumlahnilai')) document.getElementById('fld_jumlahnilai').value = data.jumlah || ''; if(document.getElementById('fld_keterangan')) document.getElementById('fld_keterangan').value = data.keterangan || ''; }
+  
+  // Helper untuk merubah tanggal ("15 Okt 2024") menjadi format input date ("2024-10-15")
+  const parseDateForInput = (dateStr) => {
+    if(!dateStr) return '';
+    const d = new Date(dateStr);
+    if(!isNaN(d.getTime())) return d.toISOString().split('T')[0];
+    const monthMap = {'jan':0,'feb':1,'mar':2,'apr':3,'mei':4,'jun':5,'jul':6,'ags':7,'sep':8,'okt':9,'nov':10,'des':11};
+    const parts = String(dateStr).toLowerCase().split(/\s+/);
+    if(parts.length >= 3) {
+      const day = parseInt(parts[0]);
+      const month = monthMap[parts[1].substring(0,3)];
+      const year = parseInt(parts[2]);
+      if(!isNaN(day) && month !== undefined && !isNaN(year)) {
+        const d2 = new Date(year, month, day);
+        if(!isNaN(d2.getTime())) return d2.toISOString().split('T')[0];
+      }
+    }
+    return '';
+  };
+
+  // Helper untuk mengisi value secara aman
+  const setVal = (id, val) => { const el = document.getElementById(id); if(el && val !== undefined && val !== null) el.value = val; };
+
+  if (type === 'kasbon') { 
+    setVal('fld_kategori', capitalize(data.kategori)); 
+    setVal('fld_jumlah', data.pokok); 
+    setVal('fld_tenor', parseInt(data.tenor) || '');
+  } else if (type === 'softloan') { 
+    setVal('fld_tipe', data.laptop); 
+    setVal('fld_harga', data.nilai); 
+    setVal('fld_tenor', parseInt(data.tenor) || ''); 
+    setVal('fld_cicilanbulan', data.cicilan);
+  } else if (type === 'sewarumah') { 
+    setVal('fld_alamat', data.lokasi); 
+    setVal('fld_sewa', data.sewa); 
+    setVal('fld_subsidi', data.subsidi); 
+    setVal('fld_mulai', parseDateForInput(data.periode)); 
+  } else if (type === 'tabungan') { 
+    setVal('fld_kategori', capitalize(data.kategori)); 
+    setVal('fld_jenis', data.jenis); 
+    setVal('fld_jumlah', data.jumlah); 
+    setVal('fld_tanggal', parseDateForInput(data.tgl));
+  } else if (type === 'infaq') { 
+    setVal('fld_kategori', capitalize(data.kategori)); 
+    setVal('fld_jenis', data.jenis); 
+    setVal('fld_penerima', data.penerima); 
+    setVal('fld_jumlah', data.jumlah); 
+    setVal('fld_tanggal', parseDateForInput(data.tgl));
+  } else if (type === 'pendidikan') { 
+    setVal('fld_nama', data.anak?.split(' / ')[0] || ''); 
+    const jenjang = data.anak?.match(/SD|SMP|SMA|Kuliah/)?.[0] || 'SMA'; 
+    setVal('fld_jenjang', jenjang); 
+    setVal('fld_institusi', data.institusi); 
+    setVal('fld_semestertahun', data.periode);
+  } else if (type === 'kesehatan') { 
+    setVal('fld_penerima', data.penerima?.includes('Diri sendiri') ? 'Diri Sendiri' : (data.penerima?.includes('Anak') ? 'Anak' : 'Suami/Istri')); 
+    setVal('fld_diagnosa', data.diagnosa); 
+    setVal('fld_rsfaskes', data.rs);
+    setVal('fld_tanggal', parseDateForInput(data.tgl));
+  } else if (type === 'musibah') { 
+    setVal('fld_jenis', data.jenis); 
+    setVal('fld_tanggal', parseDateForInput(data.tgl)); 
+    setVal('fld_lokasi', data.lokasi || '');
+    setVal('fld_estimasi', data.bantuan);
+  } else if (type === 'pensiun') { 
+    setVal('fld_tanggal', parseDateForInput(data.tgl)); 
+    setVal('fld_dana', data.dana); 
+    setVal('fld_skema', data.skema);
+  } else { 
+    setVal('fld_jumlah', data.jumlah || ''); 
+    setVal('fld_keterangan', data.keterangan || ''); 
+  }
 }
 
 function confirmDeleteEntry(type, idx) { 
@@ -2740,34 +2855,79 @@ function submitForm(e){
   const today = new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'});
   const val = (id) => document.getElementById(id)?.value || '';
   let isEdit = editingEntryType !== null && editingEntryIdx >= 0;
-  if(v === 'kasbon') { const payload = {pegawai: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), tgl: today, pokok: val('fld_jumlah'), tenor: val('fld_tenor') + ' bln', sisa: val('fld_jumlah'), catatan}; if(isEdit) { kasbonData[editingEntryIdx] = {...kasbonData[editingEntryIdx], ...payload}; } else { kasbonData.push({...payload, status: 'pending', progress: 0}); } renderKasbon();
-  } else if (v === 'softloan') { const payload = {pegawai: pegawaiIdx, laptop: val('fld_tipe'), nilai: val('fld_harga'), tenor: val('fld_tenor') + ' bln', cicilan: val('fld_cicilanbulan'), tgl: today, catatan}; if(isEdit) { softloanData[editingEntryIdx] = {...softloanData[editingEntryIdx], ...payload}; } else { softloanData.push({...payload, status: 'pending'}); } renderSoftloan();
-  } else if (v === 'sewarumah') { const payload = {pegawai: pegawaiIdx, lokasi: val('fld_alamat'), sewa: val('fld_sewa'), subsidi: val('fld_subsidi'), periode: val('fld_mulai') || 'N/A', tgl: today, catatan}; if(isEdit) { sewarumahData[editingEntryIdx] = {...sewarumahData[editingEntryIdx], ...payload}; } else { sewarumahData.push({...payload, status: 'pending', docs: {ktp: true, photo: true, kwitansi: true}}); } renderSewarumah();
-  } else if (v === 'tabungan') { const payload = {tgl: today, pegawai: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), jenis: val('fld_jenis'), jumlah: val('fld_jumlah'), saldo: 'Rp 0', catatan}; if(isEdit) { tabunganData[editingEntryIdx] = {...tabunganData[editingEntryIdx], ...payload}; } else { tabunganData.push(payload); } renderTabungan();
-  } else if (v === 'infaq') { const payload = {tgl: today, pgw: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), jenis: val('fld_jenis'), penerima: val('fld_penerima'), jumlah: val('fld_jumlah'), catatan}; if(isEdit) { infaqData[editingEntryIdx] = {...infaqData[editingEntryIdx], ...payload}; } else { infaqData.push({...payload, status: 'pending'}); } renderInfaq();
-  } else if (v === 'pendidikan') { const payload = {pegawai: pegawaiIdx, anak: `${val('fld_nama')} / ${val('fld_jenjang')}`, institusi: val('fld_institusi'), periode: val('fld_semestertahun'), tgl: today, catatan}; if(isEdit) { pendidikanData[editingEntryIdx] = {...pendidikanData[editingEntryIdx], ...payload, jumlah: pendidikanData[editingEntryIdx].jumlah}; } else { pendidikanData.push({...payload, jumlah: 'Rp 0', status: 'pending'}); } renderPendidikan();
-  } else if (v === 'kesehatan') { const payload = {pegawai: pegawaiIdx, penerima: val('fld_penerima'), diagnosa: val('fld_diagnosa'), rs: val('fld_rsfaskes'), tgl: today, catatan}; if(isEdit) { kesehatanData[editingEntryIdx] = {...kesehatanData[editingEntryIdx], ...payload, klaim: kesehatanData[editingEntryIdx].klaim}; } else { kesehatanData.push({...payload, klaim: 'Rp 0', status: 'pending'}); } renderKesehatan();
-  } else if (v === 'musibah') { const payload = {pegawai: pegawaiIdx, jenis: val('fld_jenis'), tgl: today, bantuan: val('fld_estimasi'), catatan}; if(isEdit) { musibahData[editingEntryIdx] = {...musibahData[editingEntryIdx], ...payload}; } else { musibahData.push({...payload, status: 'pending'}); } renderMusibah();
-    } else if (v === 'pensiun') { 
-    const peg = pegawai[pegawaiIdx];
-    const usiaOtomatis = calculateAge(peg?.tglLahir);
-    const payload = {
-      pegawai: pegawaiIdx, 
-      usia: usiaOtomatis !== null ? usiaOtomatis + ' Tahun' : '-', 
-      tgl: formatTanggal(val('fld_tanggal')), 
-      dana: val('fld_dana'), 
-      skema: val('fld_skema'), 
-      catatan
-    }; 
-    if(isEdit) { pensiunData[editingEntryIdx] = {...pensiunData[editingEntryIdx], ...payload}; } 
-    else { pensiunData.push({...payload, status: 'pending'}); } 
+
+  // Ambil data lama jika sedang edit agar tanggal tidak ikut tertimpa hari ini
+  let oldData = {};
+  if (isEdit) {
+    if (v === 'kasbon') oldData = kasbonData[editingEntryIdx] || {};
+    else if (v === 'softloan') oldData = softloanData[editingEntryIdx] || {};
+    else if (v === 'sewarumah') oldData = sewarumahData[editingEntryIdx] || {};
+    else if (v === 'pendidikan') oldData = pendidikanData[editingEntryIdx] || {};
+    else if (v === 'musibah') oldData = musibahData[editingEntryIdx] || {};
+    else if (v === 'kesehatan') oldData = kesehatanData[editingEntryIdx] || {};
+    else if (v === 'infaq') oldData = infaqData[editingEntryIdx] || {};
+    else if (v === 'tabungan') oldData = tabunganData[editingEntryIdx] || {};
+    else if (v === 'pensiun') oldData = pensiunData[editingEntryIdx] || {};
+  }
+
+  // Helper untuk mengambil tanggal dari form, jika kosong kembalikan tanggal lama atau hari ini
+  const getTanggal = (fieldId) => {
+    const tglInput = val(fieldId);
+    if(tglInput) return formatTanggal(tglInput); // Jika ada input tanggal di form, pakai itu
+    return isEdit ? (oldData.tgl || today) : today; // Jika tidak ada input, pakai tanggal lama (jika edit) atau hari ini (jika baru)
+  };
+  
+  if(v === 'kasbon') { 
+    const payload = {pegawai: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), tgl: isEdit ? oldData.tgl : today, pokok: val('fld_jumlah'), tenor: val('fld_tenor') + ' bln', sisa: isEdit ? oldData.sisa : val('fld_jumlah'), catatan}; 
+    if(isEdit) { kasbonData[editingEntryIdx] = {...kasbonData[editingEntryIdx], ...payload}; } else { kasbonData.push({...payload, status: 'pending', progress: 0}); } 
+    renderKasbon();
+  } else if (v === 'softloan') { 
+    const payload = {pegawai: pegawaiIdx, laptop: val('fld_tipe'), nilai: val('fld_harga'), tenor: val('fld_tenor') + ' bln', cicilan: val('fld_cicilanbulan'), tgl: isEdit ? oldData.tgl : today, catatan}; 
+    if(isEdit) { softloanData[editingEntryIdx] = {...softloanData[editingEntryIdx], ...payload}; } else { softloanData.push({...payload, status: 'pending'}); } 
+    renderSoftloan();
+  } else if (v === 'sewarumah') { 
+    const payload = {pegawai: pegawaiIdx, lokasi: val('fld_alamat'), sewa: val('fld_sewa'), subsidi: val('fld_subsidi'), periode: val('fld_mulai') || 'N/A', tgl: isEdit ? oldData.tgl : today, catatan}; 
+    if(isEdit) { sewarumahData[editingEntryIdx] = {...sewarumahData[editingEntryIdx], ...payload}; } else { sewarumahData.push({...payload, status: 'pending', docs: {ktp: true, photo: true, kwitansi: true}}); } 
+    renderSewarumah();
+  } else if (v === 'tabungan') { 
+    const payload = {tgl: getTanggal('fld_tanggal'), pegawai: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), jenis: val('fld_jenis'), jumlah: val('fld_jumlah'), saldo: isEdit ? oldData.saldo : 'Rp 0', catatan}; 
+    if(isEdit) { tabunganData[editingEntryIdx] = {...tabunganData[editingEntryIdx], ...payload}; } else { tabunganData.push(payload); } 
+    renderTabungan();
+  } else if (v === 'infaq') { 
+    const payload = {tgl: getTanggal('fld_tanggal'), pgw: pegawaiIdx, kategori: val('fld_kategori').toLowerCase(), jenis: val('fld_jenis'), penerima: val('fld_penerima'), jumlah: val('fld_jumlah'), catatan}; 
+    if(isEdit) { infaqData[editingEntryIdx] = {...infaqData[editingEntryIdx], ...payload}; } else { infaqData.push({...payload, status: 'pending'}); } 
+    renderInfaq();
+  } else if (v === 'pendidikan') { 
+    const payload = {pegawai: pegawaiIdx, anak: `${val('fld_nama')} / ${val('fld_jenjang')}`, institusi: val('fld_institusi'), periode: val('fld_semestertahun'), tgl: isEdit ? oldData.tgl : today, catatan}; 
+    if(isEdit) { pendidikanData[editingEntryIdx] = {...pendidikanData[editingEntryIdx], ...payload, jumlah: pendidikanData[editingEntryIdx].jumlah}; } else { pendidikanData.push({...payload, jumlah: 'Rp 0', status: 'pending'}); } 
+    renderPendidikan();
+  } else if (v === 'kesehatan') { 
+    const payload = {pegawai: pegawaiIdx, penerima: val('fld_penerima'), diagnosa: val('fld_diagnosa'), rs: val('fld_rsfaskes'), tgl: getTanggal('fld_tanggal'), catatan}; 
+    if(isEdit) { kesehatanData[editingEntryIdx] = {...kesehatanData[editingEntryIdx], ...payload, klaim: kesehatanData[editingEntryIdx].klaim}; } else { kesehatanData.push({...payload, klaim: 'Rp 0', status: 'pending'}); } 
+    renderKesehatan();
+  } else if (v === 'musibah') { 
+    const payload = {pegawai: pegawaiIdx, jenis: val('fld_jenis'), tgl: getTanggal('fld_tanggal'), bantuan: val('fld_estimasi'), catatan}; 
+    if(isEdit) { musibahData[editingEntryIdx] = {...musibahData[editingEntryIdx], ...payload}; } else { musibahData.push({...payload, status: 'pending'}); } 
+    renderMusibah();
+  } else if (v === 'pensiun') { 
+    const peg = pegawai[pegawaiIdx]; const usiaOtomatis = calculateAge(peg?.tglLahir); 
+    const payload = {pegawai: pegawaiIdx, usia: usiaOtomatis !== null ? usiaOtomatis + ' Tahun' : '-', tgl: getTanggal('fld_tanggal'), dana: val('fld_dana'), skema: val('fld_skema'), catatan}; 
+    if(isEdit) { pensiunData[editingEntryIdx] = {...pensiunData[editingEntryIdx], ...payload}; } else { pensiunData.push({...payload, status: 'pending'}); } 
     renderPensiun();
-  } else { const payload = { pegawai: pegawaiIdx, jenis: v, tgl: today, catatan: catatan, jumlah: val('fld_jumlahnilai'), keterangan: val('fld_keterangan') }; if(isEdit) { const idx = customData.findIndex(c => c.jenis === editingEntryType && c.idx === editingEntryIdx); if(idx > -1) customData[idx] = {...customData[idx], ...payload}; } else { const newIdx = customData.filter(c => c.jenis === v).length; customData.push({...payload, idx: newIdx, status: 'pending'}); } showToast('Pengajuan dikirim', 'Pengajuan program kustom tersimpan'); }
+  } else { 
+    const payload = { pegawai: pegawaiIdx, jenis: v, tgl: isEdit ? oldData.tgl : today, catatan: catatan, jumlah: val('fld_jumlah'), keterangan: val('fld_keterangan') }; 
+    if(isEdit) { const idx = customData.findIndex(c => c.jenis === editingEntryType && c.idx === editingEntryIdx); if(idx > -1) customData[idx] = {...customData[idx], ...payload}; } else { const newIdx = customData.filter(c => c.jenis === v).length; customData.push({...payload, idx: newIdx, status: 'pending'}); } 
+    showToast('Pengajuan dikirim', 'Pengajuan program kustom tersimpan'); 
+  }
+  
   saveData();closeModal('modalPengajuan');
 
-  currentFilterYear = new Date().getFullYear();
-  populateYearFilter();
-  document.querySelectorAll('.year-label').forEach(el => el.textContent = currentFilterYear);
+  // Jangan ubah tahun jika sedang mengedit data tahun lalu
+  if(!isEdit) {
+    currentFilterYear = new Date().getFullYear();
+    populateYearFilter();
+    document.querySelectorAll('.year-label').forEach(el => el.textContent = currentFilterYear);
+  }
   
   renderAll();
   if(!isEdit) {
