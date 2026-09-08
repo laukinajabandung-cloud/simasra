@@ -164,6 +164,7 @@
     <a class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm cursor-pointer" data-view="softloan"><i class="fa-solid fa-laptop w-4" style="color:#22d3ee"></i><span>Softloan Laptop</span></a>
     <a class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm cursor-pointer" data-view="sewarumah"><i class="fa-solid fa-house w-4" style="color:#a78bfa"></i><span>Sewa Rumah</span></a>
     <a class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm cursor-pointer" data-view="tabungan"><i class="fa-solid fa-piggy-bank w-4" style="color:#34d399"></i><span>Tabungan SDM</span></a>
+    <a class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm cursor-pointer" data-view="pensiun"><i class="fa-solid fa-umbrella-beach w-4" style="color:#f472b6"></i><span>Program Pensiun</span></a>
     <div class="menu-section-title">Bantuan & Infaq</div>
     <a class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm cursor-pointer" data-view="infaq"><i class="fa-solid fa-hand-holding-heart w-4" style="color:#10b981"></i><span>Infaq SDM</span></a>
     <a class="nav-item flex items-center gap-3 px-5 py-2.5 text-sm cursor-pointer" data-view="pendidikan"><i class="fa-solid fa-graduation-cap w-4" style="color:#60a5fa"></i><span>Bantuan Pendidikan</span></a>
@@ -215,11 +216,18 @@
       </div>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(251,191,36,0.15);color:#fbbf24"><i class="fa-solid fa-wallet"></i></div></div><div class="text-2xl font-display font-bold" id="statKasbon">Rp 0</div><div class="text-xs mt-1" style="color:var(--muted)">Total Kasbon <span class="year-label">2024</span></div></div>
-        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(34,211,238,0.15);color:#22d3ee"><i class="fa-solid fa-laptop"></i></div></div><div class="text-2xl font-display font-bold" id="statSoftloan">0 <span class="text-base">unit</span></div><div class="text-xs mt-1" style="color:var(--muted)">Laptop Disetujai <span class="year-label">2024</span></div></div>
+        <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(34,211,238,0.15);color:#22d3ee"><i class="fa-solid fa-laptop"></i></div></div><div class="text-2xl font-display font-bold" id="statSoftloan">0 <span class="text-base">unit</span></div><div class="text-xs mt-1" style="color:var(--muted)">Laptop Disetujui <span class="year-label">2024</span></div></div>
         <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(52,211,153,0.15);color:#34d399"><i class="fa-solid fa-piggy-bank"></i></div></div><div class="text-2xl font-display font-bold" id="statTabungan">Rp 0</div><div class="text-xs mt-1" style="color:var(--muted)">Tabungan SDM <span class="year-label">2024</span></div></div>
         <div class="stat-card rounded-xl p-5"><div class="flex items-start justify-between mb-3"><div class="icon-tile" style="background:rgba(96,165,250,0.15);color:#60a5fa"><i class="fa-solid fa-hand-holding-heart"></i></div></div><div class="text-2xl font-display font-bold" id="statBantuan">Rp 0</div><div class="text-xs mt-1" style="color:var(--muted)">Bantuan Disalurkan <span class="year-label">2024</span></div></div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="glass rounded-xl p-5 mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-display font-semibold flex items-center gap-2"><i class="fa-solid fa-hourglass-end" style="color:var(--accent-2)"></i> Pegawai Memasuki Masa Pensiun (Usia 58+)</h3>
+          <span class="text-xs" style="color:var(--muted)">Otomatis terdeteksi dari tanggal lahir</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="pensiunAutoList"></div>
+      </div>
         <div class="lg:col-span-2 glass rounded-xl p-5"><div class="flex items-center justify-between mb-4"><div><h3 class="font-display font-semibold">Tren Penyaluran Kesejahteraan</h3><p class="text-xs" style="color:var(--muted)">Tahun <span class="year-label">2024</span> · dalam jutaan rupiah</p></div><div class="flex gap-2 text-xs"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:#34d399"></span>Pinjaman</span><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:#fbbf24"></span>Bantuan</span></div></div><canvas id="chartTrend" height="120"></canvas></div>
         <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Distribusi Program</h3><p class="text-xs mb-4" style="color:var(--muted)">Berdasarkan jumlah pengajuan <span class="year-label">2024</span></p><canvas id="chartPie" height="200"></canvas></div>
       </div>
@@ -331,6 +339,29 @@
       <div class="glass rounded-xl"><div class="flex flex-wrap items-center justify-between gap-3 p-5 border-b" style="border-color:var(--border)"><h3 class="font-display font-semibold">Riwayat Transaksi Tabungan</h3><div class="flex flex-wrap gap-1 p-1 rounded-lg" style="background:rgba(255,255,255,0.03);border:1px solid var(--border)"><button onclick="filterTabungan('all', this)" class="tab-btn active px-3 py-1.5 rounded-md text-xs font-semibold">Semua</button><button onclick="filterTabungan('qurban', this)" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold">Qurban</button><button onclick="filterTabungan('umrah', this)" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold">Umrah</button><button onclick="filterTabungan('hariraya', this)" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold">Hari Raya</button><button onclick="filterTabungan('rihlah', this)" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold">Rihlah</button><button onclick="filterTabungan('pendidikan', this)" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold">Pendidikan</button><button onclick="filterTabungan('lainnya', this)" class="tab-btn px-3 py-1.5 rounded-md text-xs font-semibold">Lainnya</button></div></div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">Tanggal</th><th class="p-4">Pegawai</th><th class="p-4">Kategori</th><th class="p-4">Jenis Transaksi</th><th class="p-4">Jumlah</th><th class="p-4">Saldo Setelah</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="tabunganTable"></tbody></table></div></div>
     </section>
 
+    <section id="view-pensiun" class="view">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Dana Akumulasi <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" id="pensiunTotalDana">Rp 0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pegawai Mendekati Pensiun</div><div class="text-xl font-display font-bold mt-1" style="color:var(--warning)" id="pensiunMendekat">0</div><div class="text-[10px] mt-0.5" style="color:var(--muted)">Status Pending</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Pensiun Aktif/Berkala</div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)" id="pensiunAktif">0</div></div>
+        <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Entri</div><div class="text-xl font-display font-bold mt-1" id="pensiunTotalTrx">0 <span class="text-xs">entri</span></div></div>
+      </div>
+      <div class="glass rounded-xl">
+        <div class="flex items-center justify-between p-5 border-b" style="border-color:var(--border)">
+          <h3 class="font-display font-semibold">Daftar Program Pensiun Pegawai</h3>
+          <button onclick="openModal('modalPengajuan','pensiun')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Ajukan Pensiun</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)">
+              <th class="p-4">Pegawai</th><th class="p-4">Usia Pensiun</th><th class="p-4">Tgl Pensiun</th><th class="p-4">Dana Akumulasi</th><th class="p-4">Skema</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th>
+            </tr></thead>
+            <tbody id="pensiunTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section id="view-infaq" class="view">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         <div class="stat-card rounded-xl p-4"><div class="text-xs" style="color:var(--muted)">Total Infaq Terkumpul <span class="year-label">2024</span></div><div class="text-xl font-display font-bold mt-1" style="color:var(--accent)" id="infaqTerkumpul">Rp 0</div></div>
@@ -424,7 +455,7 @@
             <button onclick="openModal('modalPegawai')" class="btn-primary px-3 py-2 rounded-lg text-xs flex items-center gap-2 role-pengelola-only"><i class="fa-solid fa-plus"></i> Tambah Pegawai</button>
           </div>
         </div>
-        <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">NIP</th><th class="p-4">Nama</th><th class="p-4">Bidang</th><th class="p-4">Departemen</th><th class="p-4">Jabatan</th><th class="p-4">Masa Kerja</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="pegawaiTable"></tbody></table></div>
+        <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider" style="color:var(--muted)"><th class="p-4">NIP</th><th class="p-4">Nama</th><th class="p-4">Bidang</th><th class="p-4">Departemen</th><th class="p-4">Jabatan</th><th class="p-4">Usia</th><th class="p-4">Masa Kerja</th><th class="p-4">Status</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="pegawaiTable"></tbody></table></div>
       </div>
     </section>
 
@@ -439,7 +470,6 @@
     </section>
 
     <section id="view-laporan" class="view">
-  <!-- Header dengan tombol Unduh & Cetak -->
   <div class="glass rounded-xl p-5 mb-4 flex flex-wrap items-center justify-between gap-3">
     <div>
       <h3 class="font-display font-semibold text-lg">Laporan Program Kesejahteraan</h3>
@@ -452,6 +482,7 @@
         <option value="softloan">Softloan Laptop</option>
         <option value="sewarumah">Sewa Rumah</option>
         <option value="tabungan">Tabungan SDM</option>
+        <option value="pensiun">Program Pensiun</option>
         <option value="infaq">Infaq SDM</option>
         <option value="pendidikan">Bantuan Pendidikan</option>
         <option value="kesehatan">Bantuan Kesehatan</option>
@@ -471,7 +502,6 @@
     <div class="glass rounded-xl p-5"><h3 class="font-display font-semibold mb-1">Tingkat Pencairan</h3><p class="text-xs mb-4" style="color:var(--muted)">Rasio pengajuan vs disetujui</p><div class="space-y-3" id="approvalRate"></div></div>
   </div>
 
-  <!-- Ringkasan Realisasi -->
   <div class="glass rounded-xl p-5">
     <h3 class="font-display font-semibold mb-4">Ringkasan Realisasi Tahun <span class="year-label">2024</span></h3>
     <div class="overflow-x-auto">
@@ -553,13 +583,14 @@
   <div class="glass rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
     <div class="p-5 border-b flex items-center justify-between" style="border-color:var(--border)"><h3 class="font-display font-bold text-lg" id="modalPegawaiTitle">Tambah Pegawai Baru</h3><button onclick="closeModal('modalPegawai')" class="btn-ghost w-9 h-9 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button></div>
     <form id="formPegawai" class="p-5 space-y-4" onsubmit="submitPegawai(event)">
-      <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3">
         <div><label class="text-xs font-semibold mb-1.5 block">NIP <span style="color:var(--danger)">*</span></label><input type="text" id="pegNIP" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="Contoh: PGW-009" required></div>
         <div><label class="text-xs font-semibold mb-1.5 block">Nama Lengkap <span style="color:var(--danger)">*</span></label><input type="text" id="pegNama" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="Nama Pegawai" required></div>
         <div><label class="text-xs font-semibold mb-1.5 block">Bidang <span style="color:var(--danger)">*</span></label><input type="text" id="pegBidang" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="Contoh: Finance, Produksi" required></div>
         <div><label class="text-xs font-semibold mb-1.5 block">Departemen <span style="color:var(--danger)">*</span></label><input type="text" id="pegDept" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="Contoh: Keuangan" required></div>
         <div><label class="text-xs font-semibold mb-1.5 block">Jabatan</label><input type="text" id="pegJabatan" class="w-full px-3 py-2 rounded-lg text-sm" placeholder="Contoh: Staf" required></div>
         <div><label class="text-xs font-semibold mb-1.5 block">Tanggal Mulai Tugas</label><input type="date" id="pegTglMulai" class="w-full px-3 py-2 rounded-lg text-sm" required></div>
+        <div class="col-span-2"><label class="text-xs font-semibold mb-1.5 block">Tanggal Lahir <span style="color:var(--danger)">*</span></label><input type="date" id="pegTglLahir" class="w-full px-3 py-2 rounded-lg text-sm" required></div>
       </div>
       <div class="flex justify-end gap-2 pt-3 border-t" style="border-color:var(--border)"><button type="button" onclick="closeModal('modalPegawai')" class="btn-ghost px-4 py-2 rounded-lg text-sm">Batal</button><button type="submit" class="btn-primary px-5 py-2 rounded-lg text-sm flex items-center gap-2"><i class="fa-solid fa-save"></i> Simpan Pegawai</button></div>
     </form>
@@ -604,6 +635,8 @@
         <div class="detail-row"><span class="detail-label">Departemen</span><span id="viewPegDept" class="detail-value"></span></div>
         <div class="detail-row"><span class="detail-label">Tanggal Mulai</span><span id="viewPegMulai" class="detail-value"></span></div>
         <div class="detail-row"><span class="detail-label">Masa Kerja</span><span id="viewPegMasa" class="detail-value"></span></div>
+        <div class="detail-row"><span class="detail-label">Tanggal Lahir</span><span id="viewPegLahir" class="detail-value"></span></div>
+        <div class="detail-row"><span class="detail-label">Usia</span><span id="viewPegUsia" class="detail-value"></span></div>
       </div>
       <div class="flex justify-end gap-2 pt-4 mt-4 border-t" style="border-color:var(--border)">
         <button onclick="closeModal('modalViewPegawai')" class="btn-ghost px-4 py-2 rounded-lg text-sm">Tutup</button>
@@ -793,7 +826,7 @@ async function resetSystem() {
 }
 
 // ===== DATA & AUTO-SAVE =====
-let pegawai = [], programs = [], timPersetujuan = [], kasbonData = [], tabunganData = [], infaqData = [], sewarumahData = [], softloanData = [], pendidikanData = [], kesehatanData = [], musibahData = [], customData = [], importedData = [], akunKeuangan = [], keuanganData = [];
+let pegawai = [], programs = [], timPersetujuan = [], kasbonData = [], tabunganData = [], infaqData = [], sewarumahData = [], softloanData = [], pendidikanData = [], kesehatanData = [], musibahData = [], pensiunData = [], customData = [], importedData = [], akunKeuangan = [], keuanganData = [];
 let pegawaiFilterText = '', kasbonFilter = 'all', tabunganFilter = 'all', infaqFilter = 'all';
 let editingPegawaiIdx = -1, deletingPegawaiIdx = -1, editingTimIdx = -1, deletingTimIdx = -1, editingUserIdx = -1, deletingUserIdx = -1, editingProgramIdx = -1, deletingProgramIdx = -1, editingEntryType = null, editingEntryIdx = -1, deletingEntryType = null, deletingEntryIdx = -1, editingKeuanganIdx = -1, deletingKeuanganIdx = -1, editingAkunIdx = -1, deletingAkunIdx = -1;
 let currentViewPegawaiIdx = -1;
@@ -828,10 +861,22 @@ function calculateMasaKerja(startDateStr) {
   if (!result) result = '< 1 bln';
   return result;
 }
+function calculateAge(dateOfBirth) {
+  if (!dateOfBirth) return null;
+  const dob = new Date(dateOfBirth);
+  if (isNaN(dob.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    age--;
+  }
+  return age;
+}
 function formatTanggal(tglStr) {
   if(!tglStr) return '-';
   const tgl = new Date(tglStr);
-  if (isNaN(tgl.getTime())) return '-';
+  if (isNaN(tgl.getTime())) return tglStr;
   return tgl.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
@@ -875,21 +920,22 @@ function parseExcelDate(value) {
 }
 
 const defaultData = {
-  pegawai: [
-    {nip:'PGW-001',nama:'Andi Wijaya',bidang:'Line 1',dept:'Produksi',jabatan:'Operator Senior',tglMulai:'2016-05-10',color:'#34d399'},
-    {nip:'PGW-002',nama:'Siti Nurhaliza',bidang:'Finance',dept:'Keuangan',jabatan:'Staf Akuntansi',tglMulai:'2019-08-15',color:'#fbbf24'},
-    {nip:'PGW-003',nama:'Budi Santoso',bidang:'Recruitment',dept:'SDM',jabatan:'Supervisor',tglMulai:'2012-03-01',color:'#22d3ee'},
-    {nip:'PGW-004',nama:'Dewi Lestari',bidang:'Marketing',dept:'Pemasaran',jabatan:'Marketing Exec',tglMulai:'2021-07-20',color:'#a78bfa'},
-    {nip:'PGW-005',nama:'Eko Prasetyo',bidang:'IT Support',dept:'IT',jabatan:'Programmer',tglMulai:'2018-11-05',color:'#fb923c'},
-    {nip:'PGW-006',nama:'Fitri Handayani',bidang:'Quality Control',dept:'Produksi',jabatan:'QC Lead',tglMulai:'2014-02-14',color:'#60a5fa'},
-    {nip:'PGW-007',nama:'Gunawan Wibowo',bidang:'Warehouse',dept:'Logistik',jabatan:'Warehouse Mgr',tglMulai:'2009-09-01',color:'#f87171'},
-    {nip:'PGW-008',nama:'Hesti Purnama',bidang:'Finance',dept:'Keuangan',jabatan:'Finance Mgr',tglMulai:'2015-06-12',color:'#34d399'},
+    pegawai: [
+    {nip:'PGW-001',nama:'Andi Wijaya',bidang:'Line 1',dept:'Produksi',jabatan:'Operator Senior',tglMulai:'2016-05-10',tglLahir:'1981-05-10',color:'#34d399'},
+    {nip:'PGW-002',nama:'Siti Nurhaliza',bidang:'Finance',dept:'Keuangan',jabatan:'Staf Akuntansi',tglMulai:'2019-08-15',tglLahir:'1990-08-15',color:'#fbbf24'},
+    {nip:'PGW-003',nama:'Budi Santoso',bidang:'Recruitment',dept:'SDM',jabatan:'Supervisor',tglMulai:'2012-03-01',tglLahir:'1965-03-01',color:'#22d3ee'},
+    {nip:'PGW-004',nama:'Dewi Lestari',bidang:'Marketing',dept:'Pemasaran',jabatan:'Marketing Exec',tglMulai:'2021-07-20',tglLahir:'1995-07-20',color:'#a78bfa'},
+    {nip:'PGW-005',nama:'Eko Prasetyo',bidang:'IT Support',dept:'IT',jabatan:'Programmer',tglMulai:'2018-11-05',tglLahir:'1980-11-05',color:'#fb923c'},
+    {nip:'PGW-006',nama:'Fitri Handayani',bidang:'Quality Control',dept:'Produksi',jabatan:'QC Lead',tglMulai:'2014-02-14',tglLahir:'1972-02-14',color:'#60a5fa'},
+    {nip:'PGW-007',nama:'Gunawan Wibowo',bidang:'Warehouse',dept:'Logistik',jabatan:'Warehouse Mgr',tglMulai:'2009-09-01',tglLahir:'1960-09-01',color:'#f87171'},
+    {nip:'PGW-008',nama:'Hesti Purnama',bidang:'Finance',dept:'Keuangan',jabatan:'Finance Mgr',tglMulai:'2015-06-12',tglLahir:'1966-06-12',color:'#34d399'},
   ],
   programs: [
     {id:'kasbon',icon:'fa-wallet',label:'Kasbon',desc:'Pinjaman tunai darurat',color:'#fbbf24'},
     {id:'softloan',icon:'fa-laptop',label:'Softloan Laptop',desc:'Pembiayaan perangkat kerja',color:'#22d3ee'},
     {id:'sewarumah',icon:'fa-house',label:'Sewa Rumah',desc:'Subsidi tempat tinggal',color:'#a78bfa'},
     {id:'tabungan',icon:'fa-piggy-bank',label:'Tabungan SDM',desc:'Program tabungan karyawan',color:'#34d399'},
+    {id:'pensiun',icon:'fa-umbrella-beach',label:'Program Pensiun',desc:'Manajemen dana pensiun pegawai',color:'#f472b6'},
     {id:'infaq',icon:'fa-hand-holding-heart',label:'Infaq SDM',desc:'Infaq karyawan & sosial',color:'#10b981'},
     {id:'pendidikan',icon:'fa-graduation-cap',label:'Bantuan Pendidikan',desc:'Untuk anak pegawai',color:'#60a5fa'},
     {id:'kesehatan',icon:'fa-heart-pulse',label:'Bantuan Kesehatan',desc:'Klaim biaya medis',color:'#f87171'},
@@ -969,6 +1015,11 @@ const defaultData = {
     {pegawai:3,jenis:'Kecelakaan Lalu Lintas',tgl:'01 Okt 2024',bantuan:'Rp 12.500.000',status:'active'},
     {pegawai:4,jenis:'Wafat Keluarga (Istri)',tgl:'15 Okt 2024',bantuan:'Rp 15.000.000',status:'pending'}
   ],
+  pensiunData: [
+    {pegawai:0, usia:'58 Tahun', tgl:'15 Mar 2024', dana:'Rp 150.000.000', skema:'Lump Sum', status:'pending'},
+    {pegawai:1, usia:'60 Tahun', tgl:'20 Agt 2024', dana:'Rp 250.000.000', skema:'Berkala', status:'active'},
+    {pegawai:2, usia:'58 Tahun', tgl:'01 Jan 2024', dana:'Rp 175.000.000', skema:'Lump Sum', status:'completed'}
+  ],
   akunKeuangan: [
     { id: 'akun_1', nama: 'Kas Operasional', saldoAwal: 50000000, color: '#34d399' },
     { id: 'akun_2', nama: 'Tabungan SDM', saldoAwal: 1800000000, color: '#22d3ee' },
@@ -996,6 +1047,7 @@ function setLocalData(db) {
   pendidikanData = db.pendidikanData || defaultData.pendidikanData;
   kesehatanData = db.kesehatanData || defaultData.kesehatanData;
   musibahData = db.musibahData || defaultData.musibahData;
+  pensiunData = db.pensiunData || defaultData.pensiunData;
   customData = db.customData || [];
   akunKeuangan = db.akunKeuangan || defaultData.akunKeuangan;
   keuanganData = db.keuanganData || defaultData.keuanganData;
@@ -1014,7 +1066,7 @@ function setLocalData(db) {
   });
 }
 function getLocalData() {
-  return { pegawai, programs, usersData, timPersetujuan, kasbonData, tabunganData, infaqData, sewarumahData, softloanData, pendidikanData, kesehatanData, musibahData, customData, akunKeuangan, keuanganData };
+  return { pegawai, programs, usersData, timPersetujuan, kasbonData, tabunganData, infaqData, sewarumahData, softloanData, pendidikanData, kesehatanData, musibahData, pensiunData, customData, akunKeuangan, keuanganData };
 }
 
 async function loadData() {
@@ -1129,6 +1181,7 @@ function viewEntry(type, idx) {
   else if (type === 'pendidikan') data = pendidikanData[idx];
   else if (type === 'kesehatan') data = kesehatanData[idx];
   else if (type === 'musibah') data = musibahData[idx];
+  else if (type === 'pensiun') data = pensiunData[idx];
   else { data = customData.find(c => c.jenis === type && c.idx === idx); }
 
   if (!data) { showToast('Error', 'Data tidak ditemukan', 'warn'); return; }
@@ -1203,6 +1256,11 @@ function viewEntry(type, idx) {
     addRow('Tanggal', data.tgl);
     addRow('Jenis Musibah', data.jenis);
     addRow('Bantuan Diberikan', data.bantuan);
+  } else if (type === 'pensiun') {
+    addRow('Tanggal Pensiun', data.tgl);
+    addRow('Usia Pensiun', data.usia);
+    addRow('Dana Akumulasi', data.dana);
+    addRow('Skema Pencairan', data.skema);
   } else {
     addRow('Jumlah/Nilai', data.jumlah || '-');
     addRow('Keterangan', data.keterangan || '-');
@@ -1225,10 +1283,10 @@ function viewEntry(type, idx) {
 }
 
 function downloadTemplateExcel(){
-  const header=['NIP','Nama','Bidang','Departemen','Jabatan','Tanggal Mulai Tugas (YYYY-MM-DD)','Status'];
-  const wsData=[header,['PGW-009','Contoh Pegawai 1','Line 2','Produksi','Operator Senior','2020-01-01','Aktif'],['PGW-010','Contoh Pegawai 2','Treasury','Keuangan','Staf Akuntansi','2021-05-15','Aktif']];
+  const header=['NIP','Nama','Bidang','Departemen','Jabatan','Tanggal Mulai Tugas (YYYY-MM-DD)','Tanggal Lahir (YYYY-MM-DD)','Status'];
+  const wsData=[header,['PGW-009','Contoh Pegawai 1','Line 2','Produksi','Operator Senior','2020-01-01','1990-05-15','Aktif'],['PGW-010','Contoh Pegawai 2','Treasury','Keuangan','Staf Akuntansi','2021-05-15','1985-08-20','Aktif']];
   const ws=XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols']=[{wch:14},{wch:25},{wch:18},{wch:18},{wch:22},{wch:25},{wch:12}];
+  ws['!cols']=[{wch:14},{wch:25},{wch:18},{wch:18},{wch:22},{wch:28},{wch:28},{wch:12}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Data Pegawai');
   XLSX.writeFile(wb,'Template_Data_Pegawai.xlsx');
@@ -1252,7 +1310,7 @@ function processExcelFile(file){
       const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
       if(rows.length<2){showToast('File kosong','Tidak ada data yang dapat diimpor','warn');return;}
       const headerRow=rows[0].map(h=>String(h).trim().toLowerCase());
-      const colMap={nip:headerRow.findIndex(h=>h.includes('nip')),nama:headerRow.findIndex(h=>h.includes('nama')),bidang:headerRow.findIndex(h=>h.includes('bidang')),dept:headerRow.findIndex(h=>h.includes('departemen')||h.includes('divisi')||h.includes('dept')),jabatan:headerRow.findIndex(h=>h.includes('jabatan')||h.includes('posisi')),tglmulai:headerRow.findIndex(h=>h.includes('mulai')||h.includes('tanggal')),status:headerRow.findIndex(h=>h.includes('status'))};
+      const colMap={nip:headerRow.findIndex(h=>h.includes('nip')),nama:headerRow.findIndex(h=>h.includes('nama')),bidang:headerRow.findIndex(h=>h.includes('bidang')),dept:headerRow.findIndex(h=>h.includes('departemen')||h.includes('divisi')||h.includes('dept')),jabatan:headerRow.findIndex(h=>h.includes('jabatan')||h.includes('posisi')),tglmulai:headerRow.findIndex(h=>h.includes('mulai')||h.includes('tugas')),tgllahir:headerRow.findIndex(h=>h.includes('lahir')||h.includes('birth')),status:headerRow.findIndex(h=>h.includes('status'))};
       if(colMap.nip===-1||colMap.nama===-1||colMap.dept===-1){showToast('Format tidak sesuai','Kolom NIP, Nama, dan Departemen wajib ada','warn');return;}
       const seenNipsInFile = new Set();
       importedData=[];let validCount=0;let invalidCount=0;
@@ -1265,6 +1323,8 @@ function processExcelFile(file){
         const jabatan=colMap.jabatan>=0?String(row[colMap.jabatan]||'').trim():'';
         const tglMulaiRaw = colMap.tglmulai>=0?row[colMap.tglmulai]:'';
         const tglMulai = parseExcelDate(tglMulaiRaw);
+        const tglLahirRaw = colMap.tgllahir>=0?row[colMap.tgllahir]:'';
+        const tglLahir = parseExcelDate(tglLahirRaw);
         const status=colMap.status>=0?String(row[colMap.status]||'').trim():'Aktif';
         if(!nip&&!nama)continue;
         let valid=true;let errors=[];
@@ -1272,15 +1332,16 @@ function processExcelFile(file){
         if(!nama){valid=false;errors.push('Nama kosong');}
         if(!dept){valid=false;errors.push('Departemen kosong');}
         if(!tglMulai){valid=false;errors.push('Tgl Mulai tidak valid/kosong');}
+        if(!tglLahir){valid=false;errors.push('Tgl Lahir tidak valid/kosong');}
         if(nip && seenNipsInFile.has(nip.toLowerCase())){valid=false;errors.push('NIP duplikat di file ini');}
         else if (nip) seenNipsInFile.add(nip.toLowerCase());
-        importedData.push({nip,nama,bidang,dept,jabatan,tglMulai,status:status||'Aktif',valid,errors,rowNum:i+1});
+        importedData.push({nip,nama,bidang,dept,jabatan,tglMulai,tglLahir,status:status||'Aktif',valid,errors,rowNum:i+1});
         if(valid)validCount++;else invalidCount++;
       }
       if(importedData.length===0){showToast('Tidak ada data','File tidak berisi data yang dapat diimpor','warn');return;}
       document.getElementById('validCount').textContent=validCount+' Valid';
       document.getElementById('invalidCount').textContent=invalidCount+' Bermasalah';
-      const previewHtml=importedData.map((d,i)=>`<tr class="table-row border-t ${d.valid?'row-valid':'row-invalid'}" style="border-color:var(--border)"><td class="p-3 text-xs" style="color:var(--muted)">${i+1}</td><td class="p-3 text-sm font-mono">${d.nip||'<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm font-semibold">${d.nama||'<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm">${d.bidang||'-'}</td><td class="p-3 text-sm">${d.dept||'<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm">${d.jabatan}</td><td class="p-3 text-sm">${d.tglMulai || '<span style="color:var(--danger)">—</span>'}</td><td class="p-3">${d.valid?'<span class="badge badge-approved"><i class="fa-solid fa-check"></i> OK</span>':`<span class="badge badge-rejected" title="${d.errors.join(', ')}"><i class="fa-solid fa-xmark"></i> ${d.errors[0]}</span>`}</td></tr>`).join('');
+      const previewHtml=importedData.map((d,i)=>`<tr class="table-row border-t ${d.valid?'row-valid':'row-invalid'}" style="border-color:var(--border)"><td class="p-3 text-xs" style="color:var(--muted)">${i+1}</td><td class="p-3 text-sm font-mono">${d.nip||'<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm font-semibold">${d.nama||'<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm">${d.bidang||'-'}</td><td class="p-3 text-sm">${d.dept||'<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm">${d.jabatan}</td><td class="p-3 text-sm">${d.tglMulai || '<span style="color:var(--danger)">—</span>'}</td><td class="p-3 text-sm">${d.tglLahir || '<span style="color:var(--danger)">—</span>'}</td><td class="p-3">${d.valid?'<span class="badge badge-approved"><i class="fa-solid fa-check"></i> OK</span>':`<span class="badge badge-rejected" title="${d.errors.join(', ')}"><i class="fa-solid fa-xmark"></i> ${d.errors[0]}</span>`}</td></tr>`).join('');
       document.getElementById('previewTable').innerHTML=previewHtml;
       document.getElementById('importStep1').classList.add('hidden');
       document.getElementById('importStep2').classList.remove('hidden');
@@ -1305,10 +1366,11 @@ function confirmImport(){
       pegawai[existingIdx].dept = d.dept;
       pegawai[existingIdx].jabatan = d.jabatan;
       pegawai[existingIdx].tglMulai = d.tglMulai;
+      pegawai[existingIdx].tglLahir = d.tglLahir;
       updatedCount++;
     } else {
       pegawai.push({
-        nip:d.nip, nama:d.nama, bidang:d.bidang, dept:d.dept, jabatan:d.jabatan, tglMulai:d.tglMulai,
+        nip:d.nip, nama:d.nama, bidang:d.bidang, dept:d.dept, jabatan:d.jabatan, tglMulai:d.tglMulai, tglLahir:d.tglLahir,
         color:colors[Math.floor(Math.random()*colors.length)]
       });
       addedCount++;
@@ -1317,6 +1379,7 @@ function confirmImport(){
 
   saveData();
   renderPegawai();
+  renderDashboardPensiun();
   closeModal('modalImport');
   
   let msg = `${addedCount} pegawai baru ditambahkan`;
@@ -1333,6 +1396,7 @@ function submitPegawai(e) {
     p.dept = document.getElementById('pegDept').value;
     p.jabatan = document.getElementById('pegJabatan').value;
     p.tglMulai = document.getElementById('pegTglMulai').value;
+    p.tglLahir = document.getElementById('pegTglLahir').value;
     showToast('Berhasil', 'Data pegawai diperbarui');
   } else {
     const nip = document.getElementById('pegNIP').value;
@@ -1346,7 +1410,8 @@ function submitPegawai(e) {
       bidang: document.getElementById('pegBidang').value, 
       dept: document.getElementById('pegDept').value, 
       jabatan: document.getElementById('pegJabatan').value, 
-      tglMulai: document.getElementById('pegTglMulai').value, 
+      tglMulai: document.getElementById('pegTglMulai').value,
+      tglLahir: document.getElementById('pegTglLahir').value, 
       color: colors[Math.floor(Math.random() * colors.length)] 
     });
     showToast('Berhasil', 'Pegawai baru ditambahkan');
@@ -1367,14 +1432,18 @@ function viewPegawai(idx) {
   document.getElementById('viewPegDept').textContent = p.dept;
   document.getElementById('viewPegMulai').textContent = formatTanggal(p.tglMulai);
   document.getElementById('viewPegMasa').textContent = calculateMasaKerja(p.tglMulai);
+  document.getElementById('viewPegLahir').textContent = formatTanggal(p.tglLahir);
+  const usia = calculateAge(p.tglLahir);
+  document.getElementById('viewPegUsia').textContent = usia !== null ? usia + ' Tahun' + (usia >= 58 ? ' (Masa Pensiun)' : '') : '-';
   openModal('modalViewPegawai');
 }
 
 function printPegawai(idx) {
   if(idx < 0 || !pegawai[idx]) { showToast('Error', 'Data pegawai tidak ditemukan', 'warn'); return; }
   const p = pegawai[idx];
+  const usia = calculateAge(p.tglLahir);
   const printWindow = window.open('', '_blank');
-  printWindow.document.write(`<html><head><title>Cetak Data Pegawai - ${p.nama}</title><style>body{font-family:sans-serif;padding:40px;color:#333}h1{border-bottom:2px solid #34d399;padding-bottom:10px}table{width:100%;border-collapse:collapse;margin-top:20px}td{padding:10px;border-bottom:1px solid #eee}td:first-child{font-weight:600;width:30%;color:#666}</style></head><body><h1>Detail Data Pegawai</h1><table><tr><td>NIP</td><td>${p.nip}</td></tr><tr><td>Nama</td><td>${p.nama}</td></tr><tr><td>Bidang</td><td>${p.bidang || '-'}</td></tr><tr><td>Departemen</td><td>${p.dept}</td></tr><tr><td>Jabatan</td><td>${p.jabatan}</td></tr><tr><td>Tanggal Mulai</td><td>${formatTanggal(p.tglMulai)}</td></tr><tr><td>Masa Kerja</td><td>${calculateMasaKerja(p.tglMulai)}</td></tr></table><script>window.onload=function(){setTimeout(function(){window.print()},500)}<\/script></body></html>`);
+  printWindow.document.write(`<html><head><title>Cetak Data Pegawai - ${p.nama}</title><style>body{font-family:sans-serif;padding:40px;color:#333}h1{border-bottom:2px solid #34d399;padding-bottom:10px}table{width:100%;border-collapse:collapse;margin-top:20px}td{padding:10px;border-bottom:1px solid #eee}td:first-child{font-weight:600;width:30%;color:#666}</style></head><body><h1>Detail Data Pegawai</h1><table><tr><td>NIP</td><td>${p.nip}</td></tr><tr><td>Nama</td><td>${p.nama}</td></tr><tr><td>Bidang</td><td>${p.bidang || '-'}</td></tr><tr><td>Departemen</td><td>${p.dept}</td></tr><tr><td>Jabatan</td><td>${p.jabatan}</td></tr><tr><td>Tanggal Mulai</td><td>${formatTanggal(p.tglMulai)}</td></tr><tr><td>Masa Kerja</td><td>${calculateMasaKerja(p.tglMulai)}</td></tr><tr><td>Tanggal Lahir</td><td>${formatTanggal(p.tglLahir)}</td></tr><tr><td>Usia</td><td>${usia !== null ? usia + ' Tahun' : '-'}</td></tr></table><script>window.onload=function(){setTimeout(function(){window.print()},500)}<\/script></body></html>`);
   printWindow.document.close();
 }
 
@@ -1761,6 +1830,7 @@ function deleteEntry() {
     else if(deletingEntryType === 'pendidikan') pendidikanData.splice(deletingEntryIdx, 1);
     else if(deletingEntryType === 'kesehatan') kesehatanData.splice(deletingEntryIdx, 1);
     else if(deletingEntryType === 'musibah') musibahData.splice(deletingEntryIdx, 1);
+    else if(deletingEntryType === 'pensiun') pensiunData.splice(deletingEntryIdx, 1);
     else {
       const idx = customData.findIndex(c => c.jenis === deletingEntryType && c.idx === deletingEntryIdx);
       if(idx > -1) customData.splice(idx, 1);
@@ -1859,7 +1929,7 @@ function populateYearFilter() {
   years.add(currentYear - 2);
   years.add(currentYear + 1);
   
-  [...kasbonData, ...tabunganData, ...infaqData, ...musibahData, ...sewarumahData, ...softloanData, ...pendidikanData, ...kesehatanData, ...keuanganData].forEach(item => {
+  [...kasbonData, ...tabunganData, ...infaqData, ...musibahData, ...sewarumahData, ...softloanData, ...pendidikanData, ...kesehatanData, ...pensiunData, ...keuanganData].forEach(item => {
     const y = getYearFromDate(item.tgl || item.periode);
     years.add(y);
   });
@@ -1911,7 +1981,6 @@ function renderTabungan(){
     }).join('');
   }
 
-  // Calculate cumulative balances up to the selected year
   const allRelevantTab = tabunganData.filter(t => getYearFromDate(t.tgl) <= currentFilterYear);
   let totalSaldoGabungan = 0;
   const pegawaiSaldo = {};
@@ -1938,7 +2007,6 @@ function renderTabungan(){
   const elPegawai = document.getElementById('tabunganPegawaiAktifInfo');
   if (elPegawai) elPegawai.textContent = `${activeSaversCount} pegawai aktif menabung`;
 
-  // Top 5 Savers
   const sortedSavers = Object.entries(pegawaiSaldo)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
@@ -2017,11 +2085,63 @@ function renderMusibah(){
   }).join('');
 }
 
+function renderPensiun(){
+  // Hapus filter tahun agar semua data pensiun tampil
+  let filtered = [...pensiunData];
+  
+  // Urutkan berdasarkan status pending terlebih dahulu, lalu berdasarkan tanggal
+  filtered.sort((a, b) => {
+    if(a.status === 'pending' && b.status !== 'pending') return -1;
+    if(a.status !== 'pending' && b.status === 'pending') return 1;
+    return 0;
+  });
+
+  if(filtered.length === 0) { 
+    document.getElementById('pensiunTable').innerHTML = `<tr><td colspan="7" class="p-8 text-center text-sm" style="color:var(--muted)">Belum ada data Program Pensiun.</td></tr>`;
+    document.getElementById('pensiunTotalDana').textContent = 'Rp 0';
+    document.getElementById('pensiunMendekat').textContent = '0';
+    document.getElementById('pensiunAktif').textContent = '0';
+    document.getElementById('pensiunTotalTrx').innerHTML = '0 <span class="text-xs">entri</span>';
+    return; 
+  }
+  
+  document.getElementById('pensiunTable').innerHTML=filtered.map(p => {
+    const idx = pensiunData.indexOf(p);
+    return `<tr class="table-row border-t" style="border-color:var(--border)">
+      <td class="p-4">${avatar(p.pegawai)}</td>
+      <td class="p-4 text-sm">${p.usia}</td>
+      <td class="p-4 text-sm">${p.tgl}</td>
+      <td class="p-4 font-semibold" style="color:var(--accent-2)">${p.dana}</td>
+      <td class="p-4 text-sm">${p.skema}</td>
+      <td class="p-4">${badgeHtml(p.status)}</td>
+      <td class="p-4">${actionBtns('pensiun', idx)}</td>
+    </tr>`;
+  }).join('');
+
+  // Update Statistik Karti di atas tabel
+  const totalDana = filtered.reduce((s, d) => s + parseRupiah(d.dana), 0);
+  document.getElementById('pensiunTotalDana').textContent = formatShortRupiah(totalDana);
+  document.getElementById('pensiunMendekat').textContent = filtered.filter(d => d.status === 'pending').length;
+  document.getElementById('pensiunAktif').textContent = filtered.filter(d => d.status === 'active').length;
+  document.getElementById('pensiunTotalTrx').innerHTML = filtered.length + ' <span class="text-xs">entri</span>';
+}
+
 function renderPegawai(){
   const filtered = pegawai.filter(p => !pegawaiFilterText || p.nama.toLowerCase().includes(pegawaiFilterText) || p.nip.toLowerCase().includes(pegawaiFilterText) || p.dept.toLowerCase().includes(pegawaiFilterText) || (p.bidang && p.bidang.toLowerCase().includes(pegawaiFilterText)));
   document.getElementById('pegawaiTable').innerHTML = filtered.map(p => {
     const originalIdx = pegawai.indexOf(p);
-    return `<tr class="table-row border-t" style="border-color:var(--border)"><td class="p-4 text-sm font-mono" style="color:var(--muted)">${p.nip}</td><td class="p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs" style="background:linear-gradient(135deg,${p.color},#22d3ee);color:#04231b">${initials(p.nama)}</div><div class="font-semibold text-sm">${p.nama}</div></div></td><td class="p-4 text-sm">${p.bidang || '-'}</td><td class="p-4 text-sm">${p.dept}</td><td class="p-4 text-sm">${p.jabatan}</td><td class="p-4 text-sm">${calculateMasaKerja(p.tglMulai)}</td><td class="p-4">${badgeHtml('active')}</td><td class="p-4">${pegawaiActionBtns(originalIdx)}</td></tr>`;
+    const usia = calculateAge(p.tglLahir);
+    return `<tr class="table-row border-t" style="border-color:var(--border)">
+      <td class="p-4 text-sm font-mono" style="color:var(--muted)">${p.nip}</td>
+      <td class="p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs" style="background:linear-gradient(135deg,${p.color},#22d3ee);color:#04231b">${initials(p.nama)}</div><div class="font-semibold text-sm">${p.nama}</div></div></td>
+      <td class="p-4 text-sm">${p.bidang || '-'}</td>
+      <td class="p-4 text-sm">${p.dept}</td>
+      <td class="p-4 text-sm">${p.jabatan}</td>
+      <td class="p-4 text-sm">${usia !== null ? usia + ' Thn' : '-'}</td>
+      <td class="p-4 text-sm">${calculateMasaKerja(p.tglMulai)}</td>
+      <td class="p-4">${usia >= 58 ? '<span class="badge badge-pending">Pensiun</span>' : badgeHtml('active')}</td>
+      <td class="p-4">${pegawaiActionBtns(originalIdx)}</td>
+    </tr>`;
   }).join('');
   document.getElementById('pegawaiCount').textContent = pegawai.length + ' Total';
 }
@@ -2043,6 +2163,7 @@ function renderApprovalList() {
   mapData(kasbonData, 'kasbon', 'fa-wallet', '#fbbf24', k => k.pokok);
   mapData(softloanData, 'softloan', 'fa-laptop', '#22d3ee', s => s.nilai);
   mapData(sewarumahData, 'sewarumah', 'fa-house', '#a78bfa', s => s.subsidi);
+  mapData(pensiunData, 'pensiun', 'fa-umbrella-beach', '#f472b6', p => p.dana);
   mapData(pendidikanData, 'pendidikan', 'fa-graduation-cap', '#60a5fa', p => p.jumlah);
   mapData(kesehatanData, 'kesehatan', 'fa-heart-pulse', '#f87171', k => k.klaim);
   mapData(musibahData, 'musibah', 'fa-hands-helping', '#fb923c', m => m.bantuan);
@@ -2092,6 +2213,7 @@ function approveEntry(type, idx) {
   else if (type === 'pendidikan') data = pendidikanData[idx];
   else if (type === 'kesehatan') data = kesehatanData[idx];
   else if (type === 'musibah') data = musibahData[idx];
+  else if (type === 'pensiun') data = pensiunData[idx];
   else { data = customData.find(c => c.jenis === type && c.idx === idx); }
 
   if (data) {
@@ -2103,11 +2225,9 @@ function approveEntry(type, idx) {
 }
 
 function renderRecent(){
-  // Kumpulkan semua data dari berbagai program dengan filter tahun berjalan
   const recentItems = [];
   const year = currentFilterYear;
   
-  // Helper untuk menghitung waktu relatif
   const getRelativeTime = (dateStr) => {
     if(!dateStr) return '-';
     const now = new Date();
@@ -2124,7 +2244,6 @@ function renderRecent(){
     return dateStr;
   };
   
-  // Helper untuk parsing tanggal menjadi Date object
   const parseDate = (tglStr) => {
     if(!tglStr) return null;
     const monthMapFull = {'jan':0,'feb':1,'mar':2,'apr':3,'mei':4,'jun':5,'jul':6,'ags':7,'sep':8,'okt':9,'nov':10,'des':11};
@@ -2133,22 +2252,22 @@ function renderRecent(){
     if(parts.length >= 3) {
       const day = parseInt(parts[0]);
       const month = monthMapFull[parts[1].substring(0,3)];
-      const year = parseInt(parts[2]);
-      if(!isNaN(day) && month !== undefined && !isNaN(year)) {
-        return new Date(year, month, day);
+      const yr = parseInt(parts[2]);
+      if(!isNaN(day) && month !== undefined && !isNaN(yr)) {
+        return new Date(yr, month, day);
       }
     }
     const d = new Date(tglStr);
     return isNaN(d.getTime()) ? null : d;
   };
   
-  // Helper untuk mendapatkan label program
   const getProgramInfo = (type) => {
     const map = {
       kasbon: {label: 'Kasbon', icon: 'fa-wallet', color: '#fbbf24'},
       softloan: {label: 'Softloan Laptop', icon: 'fa-laptop', color: '#22d3ee'},
       sewarumah: {label: 'Sewa Rumah', icon: 'fa-house', color: '#a78bfa'},
       tabungan: {label: 'Tabungan SDM', icon: 'fa-piggy-bank', color: '#34d399'},
+      pensiun: {label: 'Program Pensiun', icon: 'fa-umbrella-beach', color: '#f472b6'},
       infaq: {label: 'Infaq SDM', icon: 'fa-hand-holding-heart', color: '#10b981'},
       pendidikan: {label: 'Bantuan Pendidikan', icon: 'fa-graduation-cap', color: '#60a5fa'},
       kesehatan: {label: 'Bantuan Kesehatan', icon: 'fa-heart-pulse', color: '#f87171'},
@@ -2157,7 +2276,6 @@ function renderRecent(){
     return map[type] || {label: type, icon: 'fa-file', color: '#8aa399'};
   };
   
-  // Helper untuk mendapatkan label spesifik per kategori
   const getSpecificLabel = (type, item) => {
     if(type === 'kasbon') return 'Kasbon ' + capitalize(item.kategori || 'Lainnya');
     if(type === 'tabungan') return capitalize(item.kategori || 'Tabungan');
@@ -2165,20 +2283,18 @@ function renderRecent(){
     if(type === 'musibah') return item.jenis || 'Musibah';
     if(type === 'kesehatan') return 'Klaim ' + (item.penerima || '').split('(')[0].trim();
     if(type === 'pendidikan') return 'Pendidikan ' + (item.anak || '').split('/')[1]?.trim() || '';
+    if(type === 'pensiun') return 'Pensiun ' + item.usia;
     return getProgramInfo(type).label;
   };
   
-  // Helper untuk mendapatkan jumlah/nilai
   const getAmount = (type, item) => {
-    return item.pokok || item.nilai || item.jumlah || item.subsidi || item.klaim || item.bantuan || 'Rp 0';
+    return item.pokok || item.nilai || item.jumlah || item.subsidi || item.klaim || item.bantuan || item.dana || 'Rp 0';
   };
   
-  // Helper untuk mendapatkan index pegawai
   const getPegawaiIdx = (type, item) => {
     return item.pegawai !== undefined ? item.pegawai : (item.pgw !== undefined ? item.pgw : -1);
   };
   
-  // Kumpulkan data dari semua program dengan filter tahun
   const collectData = (dataArray, type) => {
     dataArray.forEach((item, idx) => {
       if(getYearFromDate(item.tgl) === year) {
@@ -2204,22 +2320,19 @@ function renderRecent(){
   collectData(softloanData, 'softloan');
   collectData(sewarumahData, 'sewarumah');
   collectData(tabunganData, 'tabungan');
+  collectData(pensiunData, 'pensiun');
   collectData(infaqData, 'infaq');
   collectData(pendidikanData, 'pendidikan');
   collectData(kesehatanData, 'kesehatan');
   collectData(musibahData, 'musibah');
   
-  // Sortir berdasarkan tanggal terbaru
   recentItems.sort((a, b) => b.sortDate - a.sortDate);
-  
-  // Ambil 5 terbaru
   const top5 = recentItems.slice(0, 5);
   
   const recentList = document.getElementById('recentList');
   if(!recentList) return;
   
   if(top5.length === 0) {
-    // Tampilkan pesan kosong jika tidak ada data di tahun berjalan
     recentList.innerHTML = `
       <div class="flex flex-col items-center justify-center py-8 text-center">
         <div class="icon-tile mb-3" style="background:rgba(255,255,255,0.04);color:var(--muted);width:48px;height:48px">
@@ -2258,11 +2371,12 @@ function renderApprovalRate(){
     {name:'Kasbon', data: kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear)},
     {name:'Softloan Laptop', data: softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear)},
     {name:'Sewa Rumah', data: sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear)},
+    {name:'Program Pensiun', data: pensiunData.filter(p => getYearFromDate(p.tgl) === currentFilterYear)},
     {name:'Bantuan Pendidikan', data: pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear)},
     {name:'Bantuan Kesehatan', data: kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear)},
     {name:'Bantuan Musibah', data: musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear)}
   ];
-  const colors = ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'];
+  const colors = ['#fbbf24','#22d3ee','#a78bfa','#f472b6','#60a5fa','#f87171','#fb923c'];
   let html = '';
   items.forEach((i, idx) => {
     const total = i.data.length;
@@ -2282,7 +2396,6 @@ function renderApprovalRate(){
 function updateAllStatCards() {
   const setText = (id, text) => { const el = document.getElementById(id); if(el) el.innerHTML = text; };
 
-  // Kasbon
   const yKasbon = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear);
   const kOutstanding = yKasbon.reduce((s, k) => s + parseRupiah(k.sisa), 0);
   const kPrioritas = yKasbon.filter(k => k.status === 'pending' && (k.kategori === 'pendidikan' || k.kategori === 'kesehatan')).length;
@@ -2292,7 +2405,6 @@ function updateAllStatCards() {
   setText('kasbonPrioritas', kPrioritas);
   setText('kasbonPending', kPending);
 
-  // Softloan
   const ySoftloan = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear);
   const sNilai = ySoftloan.reduce((s, d) => s + parseRupiah(d.nilai), 0);
   const sPending = ySoftloan.filter(d => d.status === 'pending').length;
@@ -2302,7 +2414,6 @@ function updateAllStatCards() {
   setText('softloanPending', sPending);
   setText('softloanAvgCicilan', formatShortRupiah(sCicilan));
 
-  // Sewa Rumah
   const ySewa = sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear);
   const swSubsidi = ySewa.reduce((s, d) => s + parseRupiah(d.subsidi), 0);
   const swPending = ySewa.filter(d => d.status === 'pending').length;
@@ -2312,7 +2423,6 @@ function updateAllStatCards() {
   setText('sewarumahPending', swPending);
   setText('sewarumahAvgSubsidi', formatShortRupiah(swAvgSubsidi));
 
-  // Tabungan Stats
   const yTab = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear);
   const tSetoran = yTab.filter(t => t.jenis === 'Setoran').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
   const tPenarikan = yTab.filter(t => t.jenis === 'Penarikan').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
@@ -2322,7 +2432,6 @@ function updateAllStatCards() {
   setText('tabunganTotalTrx', yTab.length + ' <span class="text-xs">kali</span>');
   setText('tabunganPegawai', tPegawai + ' <span class="text-xs">orang</span>');
 
-  // Infaq
   const yInfaq = infaqData.filter(i => getYearFromDate(i.tgl) === currentFilterYear);
   const iTerkumpul = yInfaq.filter(i => i.jenis === 'Setoran').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
   const iDisalurkan = yInfaq.filter(i => i.jenis === 'Penyaluran').reduce((s, d) => s + Math.abs(parseRupiah(d.jumlah)), 0);
@@ -2331,7 +2440,6 @@ function updateAllStatCards() {
   setText('infaqTotalTrx', yInfaq.length + ' <span class="text-xs">entri</span>');
   setText('infaqSaldo', formatShortRupiah(iTerkumpul - iDisalurkan));
 
-  // Pendidikan
   const yPend = pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear);
   const pTotal = yPend.reduce((s, d) => s + parseRupiah(d.jumlah), 0);
   const pPending = yPend.filter(d => d.status === 'pending').length;
@@ -2340,7 +2448,6 @@ function updateAllStatCards() {
   setText('pendidikanPending', pPending);
   setText('pendidikanTotalTrx', yPend.length + ' <span class="text-xs">entri</span>');
 
-  // Kesehatan
   const yKes = kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear);
   const kTotalKlaim = yKes.reduce((s, d) => s + parseRupiah(d.klaim), 0);
   const kApproved = yKes.filter(d => d.status === 'approved' || d.status === 'active').length;
@@ -2351,7 +2458,6 @@ function updateAllStatCards() {
   setText('kesehatanPending', kPendingKlaim);
   setText('kesehatanAvgKlaim', formatShortRupiah(kAvgKlaim));
 
-  // Musibah
   const yMus = musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear);
   const mTotal = yMus.reduce((s, d) => s + parseRupiah(d.bantuan), 0);
   const mSelesai = yMus.filter(d => d.status === 'completed').length;
@@ -2366,7 +2472,7 @@ function updateDashboardStats() {
   const totalKasbon = kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.pokok), 0);
   const totalSoftloan = softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length;
   const totalTabungan = tabunganData.filter(t => getYearFromDate(t.tgl) === currentFilterYear).reduce((sum, t) => sum + Math.abs(parseRupiah(t.jumlah)), 0);
-  const totalBantuan = [...sewarumahData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).reduce((sum, item) => sum + parseRupiah(item.subsidi || item.jumlah || item.klaim || item.bantuan || 0), 0);
+  const totalBantuan = [...sewarumahData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData, ...pensiunData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).reduce((sum, item) => sum + parseRupiah(item.subsidi || item.jumlah || item.klaim || item.bantuan || item.dana || 0), 0);
 
   document.getElementById('statKasbon').textContent = formatShortRupiah(totalKasbon);
   document.getElementById('statSoftloan').textContent = totalSoftloan + ' unit';
@@ -2391,10 +2497,10 @@ function initCharts(){
       }
     });
 
-    [...sewarumahData, ...tabunganData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).forEach(item => {
+    [...sewarumahData, ...tabunganData, ...infaqData, ...pendidikanData, ...kesehatanData, ...musibahData, ...pensiunData].filter(item => getYearFromDate(item.tgl) === currentFilterYear).forEach(item => {
       const m = getMonthFromDate(item.tgl);
       if(m > -1) {
-        const val = item.subsidi || item.jumlah || item.klaim || item.bantuan || '0';
+        const val = item.subsidi || item.jumlah || item.klaim || item.bantuan || item.dana || '0';
         bantuanData[m] += Math.abs(parseRupiah(val));
       }
     });
@@ -2415,19 +2521,21 @@ function initCharts(){
   const ctx2 = document.getElementById('chartPie')?.getContext('2d');
   if (ctx2) {
     if (window.chartPieInstance) window.chartPieInstance.destroy();
+    // Ditambahkan data pensiun di sini
     const pieData = [
       kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).length,
       softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length,
       sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).length,
       pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).length,
       kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).length,
-      musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).length
+      musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).length,
+      pensiunData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).length
     ];
     window.chartPieInstance = new Chart(ctx2, {
       type: 'doughnut',
       data: {
-        labels: ['Kasbon','Softloan','Sewa Rumah','Pendidikan','Kesehatan','Musibah'],
-        datasets: [{ data: pieData, backgroundColor: ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'], borderWidth: 0 }]
+        labels: ['Kasbon','Softloan','Sewa Rumah','Pendidikan','Kesehatan','Musibah','Pensiun'],
+        datasets: [{ data: pieData, backgroundColor: ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c','#f472b6'], borderWidth: 0 }]
       },
       options: { plugins: { legend: { position: 'bottom', labels: { color: '#8aa399', padding: 12, font: { size: 10 } } } }, cutout: '65%' }
     });
@@ -2451,17 +2559,19 @@ function initCharts(){
   const ctx4 = document.getElementById('chartBar')?.getContext('2d');
   if (ctx4) {
     if (window.chartBarInstance) window.chartBarInstance.destroy();
+    // Ditambahkan data pensiun di sini
     const barData = [
       kasbonData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.pokok), 0) / 1000000,
       softloanData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).reduce((sum, s) => sum + parseRupiah(s.nilai), 0) / 1000000,
       sewarumahData.filter(s => getYearFromDate(s.tgl) === currentFilterYear).reduce((sum, s) => sum + parseRupiah(s.subsidi), 0) / 1000000,
       pendidikanData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).reduce((sum, p) => sum + parseRupiah(p.jumlah), 0) / 1000000,
       kesehatanData.filter(k => getYearFromDate(k.tgl) === currentFilterYear).reduce((sum, k) => sum + parseRupiah(k.klaim), 0) / 1000000,
-      musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).reduce((sum, m) => sum + parseRupiah(m.bantuan), 0) / 1000000
+      musibahData.filter(m => getYearFromDate(m.tgl) === currentFilterYear).reduce((sum, m) => sum + parseRupiah(m.bantuan), 0) / 1000000,
+      pensiunData.filter(p => getYearFromDate(p.tgl) === currentFilterYear).reduce((sum, p) => sum + parseRupiah(p.dana), 0) / 1000000
     ];
     window.chartBarInstance = new Chart(ctx4, {
       type: 'bar',
-      data: { labels: ['Kasbon','Softloan','Sewa Rmh','Pendidikan','Kesehatan','Musibah'], datasets: [{ label: `Realisasi ${currentFilterYear} (Juta Rp)`, data: barData, backgroundColor: ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c'], borderRadius: 6 }] },
+      data: { labels: ['Kasbon','Softloan','Sewa Rmh','Pendidikan','Kesehatan','Musibah','Pensiun'], datasets: [{ label: `Realisasi ${currentFilterYear} (Juta Rp)`, data: barData, backgroundColor: ['#fbbf24','#22d3ee','#a78bfa','#60a5fa','#f87171','#fb923c','#f472b6'], borderRadius: 6 }] },
       options: { ...chartOpts(), plugins: { legend: { display: false } } }
     });
   }
@@ -2469,7 +2579,7 @@ function initCharts(){
 
 function chartOpts(horizontal=false){return{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:!horizontal,labels:{color:'#8aa399',font:{size:11},usePointStyle:true,pointStyle:'circle'}}},scales:{x:{grid:{display:false},ticks:{color:'#8aa399',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#8aa399',font:{size:10}}}}};}
 
-const pageMeta={dashboard:['Dashboard','Ringkasan program kesejahteraan pegawai'],pengajuan:['Pengajuan Baru','Buat pengajuan program kesejahteraan'],persetujuan:['Persetujuan','Daftar pengajuan menunggu approval Anda'],kasbon:['Kasbon','Pinjaman tunai untuk kebutuhan mendesak pegawai'],softloan:['Softloan Laptop','Pembiayaan perangkat kerja pegawai'],sewarumah:['Sewa Rumah','Subsidi tempat tinggal pegawai & kelengkapan dokumen'],tabungan:['Tabungan SDM','Program tabungan & potong payroll karyawan'],infaq:['Infaq SDM','Penyaluran infaq karyawan untuk berbagai kebutuhan'],pendidikan:['Bantuan Pendidikan','Bantuan biaya pendidikan anak pegawai'],kesehatan:['Bantuan Kesehatan','Klaim biaya medis pegawai & keluarga'],musibah:['Bantuan Musibah','Bantuan darurat untuk korban musibah'],keuangan:['Laporan Keuangan','Manajemen kas, akun, dan aliran kas'],pegawai:['Data Pegawai','Daftar seluruh pegawai aktif'],program:['Data Program','Kelola daftar jenis program kesejahteraan & bantuan'],laporan:['Laporan Program','Rekap & analisis realisasi program'],pengaturan:['Pengaturan','Konfigurasi sistem & kebijakan']};
+const pageMeta={dashboard:['Dashboard','Ringkasan program kesejahteraan pegawai'],pengajuan:['Pengajuan Baru','Buat pengajuan program kesejahteraan'],persetujuan:['Persetujuan','Daftar pengajuan menunggu approval Anda'],kasbon:['Kasbon','Pinjaman tunai untuk kebutuhan mendesak pegawai'],softloan:['Softloan Laptop','Pembiayaan perangkat kerja pegawai'],sewarumah:['Sewa Rumah','Subsidi tempat tinggal pegawai & kelengkapan dokumen'],tabungan:['Tabungan SDM','Program tabungan & potong payroll karyawan'],pensiun:['Program Pensiun','Manajemen dana pensiun pegawai'],infaq:['Infaq SDM','Penyaluran infaq karyawan untuk berbagai kebutuhan'],pendidikan:['Bantuan Pendidikan','Bantuan biaya pendidikan anak pegawai'],kesehatan:['Bantuan Kesehatan','Klaim biaya medis pegawai & keluarga'],musibah:['Bantuan Musibah','Bantuan darurat untuk korban musibah'],keuangan:['Laporan Keuangan','Manajemen kas, akun, dan aliran kas'],pegawai:['Data Pegawai','Daftar seluruh pegawai aktif'],program:['Data Program','Kelola daftar jenis program kesejahteraan & bantuan'],laporan:['Laporan Program','Rekap & analisis realisasi program'],pengaturan:['Pengaturan','Konfigurasi sistem & kebijakan']};
 function navTo(view){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-'+view).classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.querySelector(`.nav-item[data-view="${view}"]`)?.classList.add('active');const [title,sub]=pageMeta[view]||['Dashboard',''];document.getElementById('pageTitle').textContent=title;document.getElementById('pageSub').textContent=sub;document.getElementById('sidebar').classList.remove('open');window.scrollTo({top:0,behavior:'smooth'});}
 document.querySelectorAll('.nav-item').forEach(n=>{n.addEventListener('click',()=>navTo(n.dataset.view));});
 document.getElementById('menuToggle')?.addEventListener('click',()=>{document.getElementById('sidebar').classList.toggle('open');});
@@ -2509,7 +2619,7 @@ function updateModalHeader(){
   document.getElementById('modalIcon').style.background=hexToRgba(p.color, 0.15);document.getElementById('modalIcon').style.color=p.color;document.getElementById('modalIcon').innerHTML=`<i class="fa-solid ${p.icon}"></i>`;
   if(!editingEntryType) document.getElementById('modalTitle').textContent='Form '+p.label; 
   document.getElementById('modalSub').textContent=p.desc;
-  const fields={kasbon:[['Kategori Kasbon','select:Pendidikan, Kesehatan, Lainnya'],['Jumlah Pinjaman','Rp 0'],['Tenor (bulan)','10'],['Tujuan Pinjaman','text']],softloan:[['Tipe Laptop','contoh: MacBook Air M2'],['Harga','Rp 0'],['Tenor (bulan)','12'],['Cicilan/Bulan','Rp 0']],sewarumah:[['Alamat Rumah','text'],['Sewa per Bulan','Rp 0'],['Subsidi Diminta','75%'],['Mulai Sewa','date']],tabungan:[['Kategori Tabungan','select:Qurban, Umrah, Hari Raya, Rihlah, Pendidikan, Lainnya'],['Jenis','select:Setoran, Penarikan'],['Jumlah','Rp 0'],['Metode','select:Transfer, Cash, Potong Payroll'],['Tanggal','date']],infaq:[['Kategori Infaq','select:Dunia Islam, Dakwah Sosial, Kesehatan, Lainnya'],['Jenis','select:Setoran, Penyaluran'],['Penerima / Sumber','text'],['Jumlah','Rp 0'],['Tanggal','date']],pendidikan:[['Nama Anak','text'],['Jenjang','select:SD, SMP, SMA, Kuliah'],['Institusi','text'],['Semester/Tahun','text']],kesehatan:[['Penerima','select:Diri Sendiri, Suami/Istri, Anak'],['Diagnosa','text'],['RS/Faskes','text'],['Tanggal Kunjungan','date']],musibah:[['Jenis Musibah','select:Kebakaran, Banjir, Kecelakaan, Wafat Keluarga, Lainnya'],['Tanggal Kejadian','date'],['Lokasi','text'],['Estimasi Kerugian','Rp 0']]};
+  const fields={kasbon:[['Kategori Kasbon','select:Pendidikan, Kesehatan, Lainnya'],['Jumlah Pinjaman','Rp 0'],['Tenor (bulan)','10'],['Tujuan Pinjaman','text']],softloan:[['Tipe Laptop','contoh: MacBook Air M2'],['Harga','Rp 0'],['Tenor (bulan)','12'],['Cicilan/Bulan','Rp 0']],sewarumah:[['Alamat Rumah','text'],['Sewa per Bulan','Rp 0'],['Subsidi Diminta','75%'],['Mulai Sewa','date']],tabungan:[['Kategori Tabungan','select:Qurban, Umrah, Hari Raya, Rihlah, Pendidikan, Lainnya'],['Jenis','select:Setoran, Penarikan'],['Jumlah','Rp 0'],['Metode','select:Transfer, Cash, Potong Payroll'],['Tanggal','date']],pensiun:[['Usia Pensiun','select:58 Tahun, 60 Tahun'],['Tanggal Pensiun','date'],['Dana Akumulasi','Rp 0'],['Skema Pencairan','select:Lump Sum, Berkala Bulanan']],infaq:[['Kategori Infaq','select:Dunia Islam, Dakwah Sosial, Kesehatan, Lainnya'],['Jenis','select:Setoran, Penyaluran'],['Penerima / Sumber','text'],['Jumlah','Rp 0'],['Tanggal','date']],pendidikan:[['Nama Anak','text'],['Jenjang','select:SD, SMP, SMA, Kuliah'],['Institusi','text'],['Semester/Tahun','text']],kesehatan:[['Penerima','select:Diri Sendiri, Suami/Istri, Anak'],['Diagnosa','text'],['RS/Faskes','text'],['Tanggal Kunjungan','date']],musibah:[['Jenis Musibah','select:Kebakaran, Banjir, Kecelakaan, Wafat Keluarga, Lainnya'],['Tanggal Kejadian','date'],['Lokasi','text'],['Estimasi Kerugian','Rp 0']]};
   if(!fields[v]) fields[v] = [['Jumlah / Nilai', 'Rp 0'], ['Keterangan', 'text']];
   const fl=fields[v]||[];
   document.getElementById('dynamicFields').innerHTML=fl.map(([label,type])=>{const id = 'fld_' + label.split(' ')[0].toLowerCase().replace(/\W/g, '');if(type.startsWith('select:')){const opts=type.split(':')[1].split(',').map(o=>`<option>${o.trim()}</option>`).join('');return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><select id="${id}" class="w-full px-3 py-2 rounded-lg text-sm">${opts}</select></div>`;}if(type==='date')return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><input type="date" id="${id}" class="w-full px-3 py-2 rounded-lg text-sm"></div>`;return `<div><label class="text-xs font-semibold mb-1.5 block">${label}</label><input type="text" id="${id}" placeholder="${type==='text'?'':type}" class="w-full px-3 py-2 rounded-lg text-sm"></div>`;}).join('');
@@ -2526,7 +2636,7 @@ function editEntry(type, idx) {
   document.getElementById('formJenis').value = type; document.getElementById('formJenis').disabled = true;
   document.getElementById('modalTitle').textContent = 'Edit Data ' + (programs.find(p=>p.id===type)?.label || type);
   let data;
-  if (type === 'kasbon') data = kasbonData[idx]; else if (type === 'softloan') data = softloanData[idx]; else if (type === 'sewarumah') data = sewarumahData[idx]; else if (type === 'tabungan') data = tabunganData[idx]; else if (type === 'infaq') data = infaqData[idx]; else if (type === 'pendidikan') data = pendidikanData[idx]; else if (type === 'kesehatan') data = kesehatanData[idx]; else if (type === 'musibah') data = musibahData[idx]; else { data = customData.find(c => c.jenis === type && c.idx === idx); if(!data) return; }
+  if (type === 'kasbon') data = kasbonData[idx]; else if (type === 'softloan') data = softloanData[idx]; else if (type === 'sewarumah') data = sewarumahData[idx]; else if (type === 'tabungan') data = tabunganData[idx]; else if (type === 'infaq') data = infaqData[idx]; else if (type === 'pendidikan') data = pendidikanData[idx]; else if (type === 'kesehatan') data = kesehatanData[idx]; else if (type === 'musibah') data = musibahData[idx]; else if (type === 'pensiun') data = pensiunData[idx]; else { data = customData.find(c => c.jenis === type && c.idx === idx); if(!data) return; }
   if(!data) return;
   document.getElementById('formPegawaiSelect').value = data.pegawai !== undefined ? data.pegawai : (data.pgw !== undefined ? data.pgw : 0);
   document.getElementById('formCatatan').value = data.catatan || '';
@@ -2538,6 +2648,7 @@ function editEntry(type, idx) {
   } else if (type === 'pendidikan') { document.getElementById('fld_nama').value = data.anak.split(' / ')[0] || ''; const jenjang = data.anak.match(/SD|SMP|SMA|Kuliah/)?.[0] || 'SMA'; document.getElementById('fld_jenjang').value = jenjang; document.getElementById('fld_institusi').value = data.institusi; document.getElementById('fld_semestertahun').value = data.periode;
   } else if (type === 'kesehatan') { document.getElementById('fld_penerima').value = data.penerima.includes('Diri sendiri') ? 'Diri Sendiri' : (data.penerima.includes('Anak') ? 'Anak' : 'Suami/Istri'); document.getElementById('fld_diagnosa').value = data.diagnosa; document.getElementById('fld_rsfaskes').value = data.rs;
   } else if (type === 'musibah') { document.getElementById('fld_jenis').value = data.jenis; document.getElementById('fld_estimasi').value = data.bantuan;
+  } else if (type === 'pensiun') { document.getElementById('fld_usia').value = data.usia; const pDate = new Date(data.tgl); if(!isNaN(pDate.getTime())) document.getElementById('fld_tanggal').value = pDate.toISOString().split('T')[0]; document.getElementById('fld_dana').value = data.dana; document.getElementById('fld_skema').value = data.skema;
   } else { if(document.getElementById('fld_jumlahnilai')) document.getElementById('fld_jumlahnilai').value = data.jumlah || ''; if(document.getElementById('fld_keterangan')) document.getElementById('fld_keterangan').value = data.keterangan || ''; }
 }
 
@@ -2572,6 +2683,7 @@ function submitForm(e){
   } else if (v === 'pendidikan') { const payload = {pegawai: pegawaiIdx, anak: `${val('fld_nama')} / ${val('fld_jenjang')}`, institusi: val('fld_institusi'), periode: val('fld_semestertahun'), tgl: today, catatan}; if(isEdit) { pendidikanData[editingEntryIdx] = {...pendidikanData[editingEntryIdx], ...payload, jumlah: pendidikanData[editingEntryIdx].jumlah}; } else { pendidikanData.push({...payload, jumlah: 'Rp 0', status: 'pending'}); } renderPendidikan();
   } else if (v === 'kesehatan') { const payload = {pegawai: pegawaiIdx, penerima: val('fld_penerima'), diagnosa: val('fld_diagnosa'), rs: val('fld_rsfaskes'), tgl: today, catatan}; if(isEdit) { kesehatanData[editingEntryIdx] = {...kesehatanData[editingEntryIdx], ...payload, klaim: kesehatanData[editingEntryIdx].klaim}; } else { kesehatanData.push({...payload, klaim: 'Rp 0', status: 'pending'}); } renderKesehatan();
   } else if (v === 'musibah') { const payload = {pegawai: pegawaiIdx, jenis: val('fld_jenis'), tgl: today, bantuan: val('fld_estimasi'), catatan}; if(isEdit) { musibahData[editingEntryIdx] = {...musibahData[editingEntryIdx], ...payload}; } else { musibahData.push({...payload, status: 'pending'}); } renderMusibah();
+  } else if (v === 'pensiun') { const payload = {pegawai: pegawaiIdx, usia: val('fld_usia'), tgl: formatTanggal(val('fld_tanggal')), dana: val('fld_dana'), skema: val('fld_skema'), catatan}; if(isEdit) { pensiunData[editingEntryIdx] = {...pensiunData[editingEntryIdx], ...payload}; } else { pensiunData.push({...payload, status: 'pending'}); } renderPensiun();
   } else { const payload = { pegawai: pegawaiIdx, jenis: v, tgl: today, catatan: catatan, jumlah: val('fld_jumlahnilai'), keterangan: val('fld_keterangan') }; if(isEdit) { const idx = customData.findIndex(c => c.jenis === editingEntryType && c.idx === editingEntryIdx); if(idx > -1) customData[idx] = {...customData[idx], ...payload}; } else { const newIdx = customData.filter(c => c.jenis === v).length; customData.push({...payload, idx: newIdx, status: 'pending'}); } showToast('Pengajuan dikirim', 'Pengajuan program kustom tersimpan'); }
   saveData();closeModal('modalPengajuan');
 
@@ -2594,9 +2706,36 @@ function showToast(title,msg,type='ok'){document.getElementById('toastTitle').te
 const dropZone=document.getElementById('dropZone');
 if(dropZone){dropZone.addEventListener('dragover',(e)=>{e.preventDefault();dropZone.classList.add('dragover');});dropZone.addEventListener('dragleave',()=>{dropZone.classList.remove('dragover');});dropZone.addEventListener('drop',(e)=>{e.preventDefault();dropZone.classList.remove('dragover');const file=e.dataTransfer.files[0];if(file){document.getElementById('fileInput').files=e.dataTransfer.files;processExcelFile(file);}});}
 
+function renderDashboardPensiun() {
+  const list = document.getElementById('pensiunAutoList');
+  if(!list) return;
+  const pensiunan = pegawai.filter(p => {
+    const usia = calculateAge(p.tglLahir);
+    return usia !== null && usia >= 58;
+  });
+  
+  if(pensiunan.length === 0) {
+    list.innerHTML = `<div class="text-sm text-center py-4 col-span-full" style="color:var(--muted)">Belum ada pegawai yang memasuki masa pensiun (58+).</div>`;
+    return;
+  }
+  
+  list.innerHTML = pensiunan.map(p => {
+    const usia = calculateAge(p.tglLahir);
+    return `
+    <div class="flex items-center gap-3 p-3 rounded-lg" style="background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.2)">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0" style="background:linear-gradient(135deg,${p.color},#fbbf24);color:#04231b">${initials(p.nama)}</div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-semibold truncate">${p.nama}</div>
+        <div class="text-xs" style="color:var(--muted)">${p.jabatan} · ${p.dept}</div>
+      </div>
+      <span class="badge badge-pending"><i class="fa-solid fa-hourglass-end"></i> ${usia} Thn</span>
+    </div>`;
+  }).join('');
+}
+
 function renderAll() { 
   initCharts(); 
-  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();renderRingkasanLaporan();updateDashboardStats();updateAllStatCards(); 
+  renderKasbon();renderSoftloan();renderSewarumah();renderTabungan();renderInfaq();renderPendidikan();renderKesehatan();renderMusibah();renderPensiun();renderPegawai();renderProgramsMaster();renderTimPersetujuan();renderUsers();renderRecent();renderApprovalList();renderPrograms();renderApprovalRate();renderKeuangan();renderRingkasanLaporan();renderDashboardPensiun();updateDashboardStats();updateAllStatCards(); 
 }
 
 // ===== REPORT FUNCTIONS (Unduh & Cetak) =====
@@ -2676,6 +2815,22 @@ function getReportData(type) {
       });
     });
     if (type === 'tabungan') { title = 'Laporan Tabungan SDM'; progLabel = 'Tabungan SDM'; }
+  }
+  
+  if (type === 'pensiun' || type === 'semua') {
+    pensiunData.filter(p => getYearFromDate(p.tgl) === year).forEach(p => {
+      rows.push({
+        'Program': 'Program Pensiun',
+        'Pegawai': pegawai[p.pegawai]?.nama || '-',
+        'NIP': pegawai[p.pegawai]?.nip || '-',
+        'Usia Pensiun': p.usia,
+        'Tanggal Pensiun': p.tgl,
+        'Dana Akumulasi': p.dana,
+        'Skema Pencairan': p.skema,
+        'Status': p.status
+      });
+    });
+    if (type === 'pensiun') { title = 'Laporan Program Pensiun'; progLabel = 'Program Pensiun'; }
   }
 
   if (type === 'infaq' || type === 'semua') {
@@ -2771,9 +2926,8 @@ function printReport(type) {
   const columns = Object.keys(rows[0]);
   const today = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  // Hitung ringkasan
   const totalNilai = rows.reduce((sum, r) => {
-    const val = r['Nilai/Pokok'] || r['Nilai'] || r['Subsidi'] || r['Jumlah'] || r['Klaim'] || r['Bantuan'] || r['Jumlah Bantuan'] || '';
+    const val = r['Nilai/Pokok'] || r['Nilai'] || r['Subsidi'] || r['Jumlah'] || r['Klaim'] || r['Bantuan'] || r['Jumlah Bantuan'] || r['Dana Akumulasi'] || '';
     return sum + parseRupiah(val);
   }, 0);
 
@@ -2845,7 +2999,6 @@ function downloadLaporanKeuangan() {
     return;
   }
 
-  // Sheet 1: Transaksi
   const trxRows = filteredTrx.map(t => {
     const akun = akunKeuangan.find(a => a.id === t.akunId);
     return {
@@ -2857,7 +3010,6 @@ function downloadLaporanKeuangan() {
     };
   });
 
-  // Sheet 2: Ringkasan per Akun
   const akunRows = akunKeuangan.map(ak => {
     const trxAkun = filteredTrx.filter(t => t.akunId === ak.id);
     const masuk = trxAkun.filter(t => t.jenis === 'pemasukan').reduce((s, t) => s + t.jumlah, 0);
@@ -2971,14 +3123,14 @@ function printLaporanKeuangan() {
   win.document.close();
 }
 
-// Render ringkasan tabel di view Laporan
 function renderRingkasanLaporan() {
   const year = currentFilterYear;
-  const programs = [
+  const progs = [
     { name: 'Kasbon', data: kasbonData.filter(k => getYearFromDate(k.tgl) === year), valKey: 'pokok' },
     { name: 'Softloan Laptop', data: softloanData.filter(s => getYearFromDate(s.tgl) === year), valKey: 'nilai' },
     { name: 'Sewa Rumah', data: sewarumahData.filter(s => getYearFromDate(s.tgl) === year), valKey: 'subsidi' },
     { name: 'Tabungan SDM', data: tabunganData.filter(t => getYearFromDate(t.tgl) === year), valKey: 'jumlah' },
+    { name: 'Program Pensiun', data: pensiunData.filter(p => getYearFromDate(p.tgl) === year), valKey: 'dana' },
     { name: 'Infaq SDM', data: infaqData.filter(i => getYearFromDate(i.tgl) === year), valKey: 'jumlah' },
     { name: 'Bantuan Pendidikan', data: pendidikanData.filter(p => getYearFromDate(p.tgl) === year), valKey: 'jumlah' },
     { name: 'Bantuan Kesehatan', data: kesehatanData.filter(k => getYearFromDate(k.tgl) === year), valKey: 'klaim' },
@@ -2986,7 +3138,7 @@ function renderRingkasanLaporan() {
   ];
   const body = document.getElementById('ringkasanBody');
   if (!body) return;
-  body.innerHTML = programs.map((p, i) => {
+  body.innerHTML = progs.map((p, i) => {
     const total = p.data.length;
     const approved = p.data.filter(x => x.status === 'approved' || x.status === 'active' || x.status === 'completed').length;
     const pending = p.data.filter(x => x.status === 'pending').length;
