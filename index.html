@@ -2102,7 +2102,156 @@ function approveEntry(type, idx) {
   }
 }
 
-function renderRecent(){const recent=[{pgw:0,type:'kasbon',idx:0,label:'Kasbon Kesehatan',amt:'Rp 15.000.000',time:'2 jam lalu',status:'pending',icon:'fa-heart-pulse',color:'#f87171'},{pgw:1,type:'kasbon',idx:1,label:'Kasbon Pendidikan',amt:'Rp 8.000.000',time:'5 jam lalu',status:'pending',icon:'fa-graduation-cap',color:'#60a5fa'},{pgw:2,type:'kesehatan',idx:0,label:'Bantuan Kesehatan',amt:'Rp 4.200.000',time:'1 hari lalu',status:'approved',icon:'fa-heart-pulse',color:'#f87171'},{pgw:3,type:'pendidikan',idx:0,label:'Bantuan Pendidikan',amt:'Rp 2.000.000',time:'1 hari lalu',status:'pending',icon:'fa-graduation-cap',color:'#60a5fa'},{pgw:4,type:'musibah',idx:0,label:'Bantuan Musibah',amt:'Rp 15.000.000',time:'2 hari lalu',status:'pending',icon:'fa-hands-helping',color:'#fb923c'}];document.getElementById('recentList').innerHTML=recent.map(r=>`<div onclick="viewEntry('${r.type}', ${r.idx})" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition cursor-pointer"><div class="icon-tile" style="background:${r.color}22;color:${r.color};width:36px;height:36px;font-size:.85rem"><i class="fa-solid ${r.icon}"></i></div><div class="flex-1 min-w-0"><div class="text-sm font-semibold truncate">${pegawai[r.pgw]?.nama || 'N/A'}</div><div class="text-xs" style="color:var(--muted)">${r.label} · ${r.amt}</div></div><div class="text-right">${badgeHtml(r.status)}<div class="text-[10px] mt-1" style="color:var(--muted)">${r.time}</div></div></div>`).join('');}
+function renderRecent(){
+  // Kumpulkan semua data dari berbagai program dengan filter tahun berjalan
+  const recentItems = [];
+  const year = currentFilterYear;
+  
+  // Helper untuk menghitung waktu relatif
+  const getRelativeTime = (dateStr) => {
+    if(!dateStr) return '-';
+    const now = new Date();
+    const itemDate = new Date(dateStr);
+    if(isNaN(itemDate.getTime())) return dateStr;
+    const diffMs = now - itemDate;
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    if(diffHours < 1) return 'Baru saja';
+    if(diffHours < 24) return diffHours + ' jam lalu';
+    if(diffDays === 1) return '1 hari lalu';
+    if(diffDays < 7) return diffDays + ' hari lalu';
+    if(diffDays < 30) return Math.floor(diffDays/7) + ' minggu lalu';
+    return dateStr;
+  };
+  
+  // Helper untuk parsing tanggal menjadi Date object
+  const parseDate = (tglStr) => {
+    if(!tglStr) return null;
+    const monthMapFull = {'jan':0,'feb':1,'mar':2,'apr':3,'mei':4,'jun':5,'jul':6,'ags':7,'sep':8,'okt':9,'nov':10,'des':11};
+    const str = String(tglStr).toLowerCase();
+    const parts = str.split(/\s+/);
+    if(parts.length >= 3) {
+      const day = parseInt(parts[0]);
+      const month = monthMapFull[parts[1].substring(0,3)];
+      const year = parseInt(parts[2]);
+      if(!isNaN(day) && month !== undefined && !isNaN(year)) {
+        return new Date(year, month, day);
+      }
+    }
+    const d = new Date(tglStr);
+    return isNaN(d.getTime()) ? null : d;
+  };
+  
+  // Helper untuk mendapatkan label program
+  const getProgramInfo = (type) => {
+    const map = {
+      kasbon: {label: 'Kasbon', icon: 'fa-wallet', color: '#fbbf24'},
+      softloan: {label: 'Softloan Laptop', icon: 'fa-laptop', color: '#22d3ee'},
+      sewarumah: {label: 'Sewa Rumah', icon: 'fa-house', color: '#a78bfa'},
+      tabungan: {label: 'Tabungan SDM', icon: 'fa-piggy-bank', color: '#34d399'},
+      infaq: {label: 'Infaq SDM', icon: 'fa-hand-holding-heart', color: '#10b981'},
+      pendidikan: {label: 'Bantuan Pendidikan', icon: 'fa-graduation-cap', color: '#60a5fa'},
+      kesehatan: {label: 'Bantuan Kesehatan', icon: 'fa-heart-pulse', color: '#f87171'},
+      musibah: {label: 'Bantuan Musibah', icon: 'fa-hands-helping', color: '#fb923c'}
+    };
+    return map[type] || {label: type, icon: 'fa-file', color: '#8aa399'};
+  };
+  
+  // Helper untuk mendapatkan label spesifik per kategori
+  const getSpecificLabel = (type, item) => {
+    if(type === 'kasbon') return 'Kasbon ' + capitalize(item.kategori || 'Lainnya');
+    if(type === 'tabungan') return capitalize(item.kategori || 'Tabungan');
+    if(type === 'infaq') return capitalize(item.kategori || 'Infaq');
+    if(type === 'musibah') return item.jenis || 'Musibah';
+    if(type === 'kesehatan') return 'Klaim ' + (item.penerima || '').split('(')[0].trim();
+    if(type === 'pendidikan') return 'Pendidikan ' + (item.anak || '').split('/')[1]?.trim() || '';
+    return getProgramInfo(type).label;
+  };
+  
+  // Helper untuk mendapatkan jumlah/nilai
+  const getAmount = (type, item) => {
+    return item.pokok || item.nilai || item.jumlah || item.subsidi || item.klaim || item.bantuan || 'Rp 0';
+  };
+  
+  // Helper untuk mendapatkan index pegawai
+  const getPegawaiIdx = (type, item) => {
+    return item.pegawai !== undefined ? item.pegawai : (item.pgw !== undefined ? item.pgw : -1);
+  };
+  
+  // Kumpulkan data dari semua program dengan filter tahun
+  const collectData = (dataArray, type) => {
+    dataArray.forEach((item, idx) => {
+      if(getYearFromDate(item.tgl) === year) {
+        const info = getProgramInfo(type);
+        const dateObj = parseDate(item.tgl);
+        recentItems.push({
+          type: type,
+          idx: idx,
+          pgw: getPegawaiIdx(type, item),
+          label: getSpecificLabel(type, item),
+          amt: getAmount(type, item),
+          time: getRelativeTime(item.tgl),
+          sortDate: dateObj || new Date(0),
+          status: item.status || 'pending',
+          icon: info.icon,
+          color: info.color
+        });
+      }
+    });
+  };
+  
+  collectData(kasbonData, 'kasbon');
+  collectData(softloanData, 'softloan');
+  collectData(sewarumahData, 'sewarumah');
+  collectData(tabunganData, 'tabungan');
+  collectData(infaqData, 'infaq');
+  collectData(pendidikanData, 'pendidikan');
+  collectData(kesehatanData, 'kesehatan');
+  collectData(musibahData, 'musibah');
+  
+  // Sortir berdasarkan tanggal terbaru
+  recentItems.sort((a, b) => b.sortDate - a.sortDate);
+  
+  // Ambil 5 terbaru
+  const top5 = recentItems.slice(0, 5);
+  
+  const recentList = document.getElementById('recentList');
+  if(!recentList) return;
+  
+  if(top5.length === 0) {
+    // Tampilkan pesan kosong jika tidak ada data di tahun berjalan
+    recentList.innerHTML = `
+      <div class="flex flex-col items-center justify-center py-8 text-center">
+        <div class="icon-tile mb-3" style="background:rgba(255,255,255,0.04);color:var(--muted);width:48px;height:48px">
+          <i class="fa-solid fa-inbox text-xl"></i>
+        </div>
+        <div class="text-sm font-semibold" style="color:var(--muted)">Belum ada pengajuan</div>
+        <div class="text-xs mt-1" style="color:var(--muted)">Tidak ada data pengajuan untuk tahun ${year}</div>
+        <button onclick="openModal('modalPengajuan')" class="btn-outline px-4 py-2 rounded-lg text-xs flex items-center gap-2 mt-4 role-pengelola-only">
+          <i class="fa-solid fa-plus"></i> Buat Pengajuan Baru
+        </button>
+      </div>
+    `;
+    return;
+  }
+  
+  recentList.innerHTML = top5.map(r => `
+    <div onclick="viewEntry('${r.type}', ${r.idx})" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition cursor-pointer">
+      <div class="icon-tile" style="background:${r.color}22;color:${r.color};width:36px;height:36px;font-size:.85rem">
+        <i class="fa-solid ${r.icon}"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-semibold truncate">${pegawai[r.pgw]?.nama || 'N/A'}</div>
+        <div class="text-xs" style="color:var(--muted)">${r.label} · ${r.amt}</div>
+      </div>
+      <div class="text-right">
+        ${badgeHtml(r.status)}
+        <div class="text-[10px] mt-1" style="color:var(--muted)">${r.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
 function renderPrograms(){document.getElementById('programGrid').innerHTML=programs.map(p=>`<button onclick="openModal('modalPengajuan','${p.id}')" class="text-left p-4 rounded-xl border transition hover:scale-[1.03]" style="border-color:var(--border);background:rgba(255,255,255,0.02)"><div class="icon-tile mb-3" style="background:${hexToRgba(p.color, 0.15)};color:${p.color}"><i class="fa-solid ${p.icon}"></i></div><div class="font-semibold text-sm">${p.label}</div><div class="text-xs mt-0.5" style="color:var(--muted)">${p.desc}</div></button>`).join('');}
 function renderApprovalRate(){
   const items = [
